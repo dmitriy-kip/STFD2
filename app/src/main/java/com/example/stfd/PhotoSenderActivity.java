@@ -16,11 +16,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.thorny.photoeasy.OnPictureReady;
@@ -29,16 +32,25 @@ import com.thorny.photoeasy.PhotoEasy;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class PhotoSenderActivity extends AppCompatActivity {
     ImageView imageView;
     PhotoEasy photoEasy;
+    List<Bitmap> smallImages = new ArrayList<>();
+    MyAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
+
+        RecyclerView recyclerView = findViewById(R.id.recycle_list);
+        myAdapter = new MyAdapter(this, smallImages);
+        recyclerView.setAdapter(myAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         photoEasy = PhotoEasy.builder()
                 .setActivity(this)
@@ -55,7 +67,6 @@ public class PhotoSenderActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     @Override
@@ -64,7 +75,8 @@ public class PhotoSenderActivity extends AppCompatActivity {
         photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
             @Override
             public void onFinish(Bitmap thumbnail) {
-                imageView.setImageBitmap(thumbnail);
+                smallImages.add(thumbnail);
+                myAdapter.notifyItemInserted(smallImages.size()-1);
             }
         });
 
