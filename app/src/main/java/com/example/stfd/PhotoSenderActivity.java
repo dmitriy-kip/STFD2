@@ -26,15 +26,31 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.thorny.photoeasy.OnPictureReady;
 import com.thorny.photoeasy.PhotoEasy;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import cz.msebera.android.httpclient.Header;
 
 public class PhotoSenderActivity extends AppCompatActivity {
     ImageView imageView;
@@ -64,6 +80,27 @@ public class PhotoSenderActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 photoEasy.startActivityForResult(PhotoSenderActivity.this);
+            }
+        });
+
+
+        String url = "https://172.16.0.227:600/api/upload_file";
+        AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
+        RequestParams params = new RequestParams();
+        params.put("q", "android");
+        params.put("rsz", "8");
+        client.get(url, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                // Handle resulting parsed JSON response here
+                Log.e("ответ","все ок");
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                Log.e("ответ","не ок");
             }
         });
 
