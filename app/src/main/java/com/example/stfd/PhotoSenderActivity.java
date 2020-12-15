@@ -33,9 +33,12 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import com.thorny.photoeasy.OnPictureReady;
 import com.thorny.photoeasy.PhotoEasy;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -57,6 +60,8 @@ public class PhotoSenderActivity extends AppCompatActivity {
     PhotoEasy photoEasy;
     List<Bitmap> smallImages = new ArrayList<>();
     MyAdapter myAdapter;
+    Context context = this;
+    List<File> listImages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +96,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
         params.put("rsz", "8");
         client.get(url, params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 // Root JSON in response is an dictionary i.e { "data : [ ... ] }
                 // Handle resulting parsed JSON response here
                 Log.e("ответ","все ок");
@@ -114,7 +119,27 @@ public class PhotoSenderActivity extends AppCompatActivity {
             public void onFinish(Bitmap thumbnail) {
                 smallImages.add(thumbnail);
                 myAdapter.notifyItemInserted(smallImages.size()-1);
+                File f = new File(context.getCacheDir(), "temporary_file.jpg");
+                try {
+                    f.createNewFile();
+
+
+                    Bitmap bitmap = thumbnail;
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
+                    byte[] bitmapdata = bos.toByteArray();
+
+                    FileOutputStream fos = new FileOutputStream(f);
+                    fos.write(bitmapdata);
+                    fos.flush();
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                listImages.add(f);
+
             }
+
         });
 
     }
