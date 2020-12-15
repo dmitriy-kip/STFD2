@@ -3,4 +3,5 @@
     <string name="numdoc">Введите номер документа</string>
     <string name="date">Дата</string>
     <string name="photo">ФОТО</string>
+    <string name="send">Отправить</string>
 </resources>

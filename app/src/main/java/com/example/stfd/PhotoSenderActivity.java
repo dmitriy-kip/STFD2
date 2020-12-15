@@ -62,6 +62,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
     MyAdapter myAdapter;
     Context context = this;
     List<File> listImages = new ArrayList<>();
+    Button sendPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,14 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 .build();
 
         imageView = findViewById(R.id.image);
+
+        sendPhoto = findViewById(R.id.sendToServer);
+        sendPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         Button cameraGo = findViewById(R.id.make_photo);
         cameraGo.setOnClickListener(new View.OnClickListener() {
@@ -119,10 +128,10 @@ public class PhotoSenderActivity extends AppCompatActivity {
             public void onFinish(Bitmap thumbnail) {
                 smallImages.add(thumbnail);
                 myAdapter.notifyItemInserted(smallImages.size()-1);
+
                 File f = new File(context.getCacheDir(), "temporary_file.jpg");
                 try {
                     f.createNewFile();
-
 
                     Bitmap bitmap = thumbnail;
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -137,7 +146,9 @@ public class PhotoSenderActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 listImages.add(f);
+                //Log.e("проверка листа", listImages.size() + "" + f.toString());
 
+                sendPhoto.setVisibility(View.VISIBLE);
             }
 
         });
