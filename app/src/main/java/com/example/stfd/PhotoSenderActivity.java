@@ -89,8 +89,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
                 RequestParams params = new RequestParams();
                 try {
-                    params.put("file_upload", listImages.get(0));
-                    params.put("param1", "Test");
+                    params.put("file_upload", listImages.get(0), "application/octet-stream");
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
