@@ -38,6 +38,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -61,7 +62,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
     List<Bitmap> smallImages = new ArrayList<>();
     MyAdapter myAdapter;
     Context context = this;
-    List<File> listImages = new ArrayList<>();
+    ArrayList<File> listImages = new ArrayList<>();
     Button sendPhoto;
 
     @Override
@@ -85,7 +86,38 @@ public class PhotoSenderActivity extends AppCompatActivity {
         sendPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
+                RequestParams params = new RequestParams();
+                try {
+                    params.put("file_upload", listImages.get(0));
+                    params.put("param1", "Test");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                client.post("https://172.16.0.227:600/api/upload_file",params,new TextHttpResponseHandler(){
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        Log.e("ответ", "не ок " + responseString);
+                    }
 
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                        Log.e("ответ","все ок " + responseString);
+                    }
+
+                   /* @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                        // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                        // Handle resulting parsed JSON response here
+                        Log.e("ответ","все ок " + response.toString());
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                        // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                        Log.e("ответ", "не ок " + errorResponse.toString());
+                    }*/
+                });
             }
         });
 
@@ -103,18 +135,23 @@ public class PhotoSenderActivity extends AppCompatActivity {
         RequestParams params = new RequestParams();
         params.put("q", "android");
         params.put("rsz", "8");
-        client.get(url, params, new JsonHttpResponseHandler() {
-            @Override
+        client.get(url, params, new TextHttpResponseHandler() {
+            /*@Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 // Root JSON in response is an dictionary i.e { "data : [ ... ] }
                 // Handle resulting parsed JSON response here
                 Log.e("ответ","все ок");
-            }
+            }*/
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
                 Log.e("ответ","не ок");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                Log.e("ответ","все ок");
             }
         });
 
@@ -147,10 +184,8 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 }
                 listImages.add(f);
                 //Log.e("проверка листа", listImages.size() + "" + f.toString());
-
                 sendPhoto.setVisibility(View.VISIBLE);
             }
-
         });
 
     }
