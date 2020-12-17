@@ -46,6 +46,8 @@ public class PhotoSenderActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        new NukeSSLCerts();
+        NukeSSLCerts.nuke();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
 
@@ -79,12 +81,11 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 }){
                     @Override
                     protected Map<String, String> getParams() throws AuthFailureError {
-                        Map<String,String> map = new HashMap<>();
+                        Map<String,String> map = new HashMap<String, String>();
                         map.put("file_upload", listImages.get(0));
                         return map;
                     }
                 };
-
                 RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
                 queue.add(request);
             }
