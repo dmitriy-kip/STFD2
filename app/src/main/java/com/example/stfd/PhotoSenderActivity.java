@@ -22,11 +22,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.thorny.photoeasy.OnPictureReady;
 import com.thorny.photoeasy.PhotoEasy;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,63 +38,52 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cz.msebera.android.httpclient.Header;
+
 public class PhotoSenderActivity extends AppCompatActivity {
     ImageView imageView;
     PhotoEasy photoEasy;
     List<Bitmap> smallImages = new ArrayList<>();
     MyAdapter myAdapter;
     Context context = this;
-    ArrayList<String> listImages = new ArrayList<>();
+    ArrayList<File> listImages = new ArrayList<>();
     Button sendPhoto;
-    String encodeImageString;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        new NukeSSLCerts();
-        NukeSSLCerts.nuke();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
-
         RecyclerView recyclerView = findViewById(R.id.recycle_list);
         myAdapter = new MyAdapter(this, smallImages);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
         photoEasy = PhotoEasy.builder()
                 .setActivity(this)
                 .setStorageType(PhotoEasy.StorageType.media)
                 .build();
-
         imageView = findViewById(R.id.image);
-
         sendPhoto = findViewById(R.id.sendToServer);
         sendPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StringRequest request = new StringRequest(Request.Method.POST, "https://172.16.0.227:600/api/upload_file", new Response.Listener<String>() {
+                AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
+                RequestParams params = new RequestParams();
+                try {
+                    params.put("file_upload", listImages.get(0), "application/octet-stream");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                client.post("https://172.16.0.227:600/api/upload_file",params,new TextHttpResponseHandler(){
                     @Override
-                    public void onResponse(String response) {
-                        Log.e("otvet", "ok" + response);
-
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        Log.e("ответ", "не ок " + responseString);
                     }
-                }, new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("otvet", "ok" + error);
+                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                        Log.e("ответ","все ок " + responseString);
                     }
-                }){
-                    @Override
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        Map<String,String> map = new HashMap<String, String>();
-                        map.put("file_upload", listImages.get(0));
-                        return map;
-                    }
-                };
-                RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-                queue.add(request);
+                });
             }
         });
-
         Button cameraGo = findViewById(R.id.make_photo);
         cameraGo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,9 +91,24 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 photoEasy.startActivityForResult(PhotoSenderActivity.this);
             }
         });
+        String url = "https://172.16.0.227:600/api/upload_file";
+        AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
+        RequestParams params = new RequestParams();
+        params.put("q", "android");
+        params.put("rsz", "8");
+        client.get(url, params, new TextHttpResponseHandler() {
 
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                Log.e("ответ","не ок");
+            }
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                Log.e("ответ","все ок");
+            }
+        });
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -109,31 +117,24 @@ public class PhotoSenderActivity extends AppCompatActivity {
             public void onFinish(Bitmap thumbnail) {
                 smallImages.add(thumbnail);
                 myAdapter.notifyItemInserted(smallImages.size()-1);
-
                 File f = new File(context.getCacheDir(), "temporary_file.jpg");
                 try {
                     f.createNewFile();
-
                     Bitmap bitmap = thumbnail;
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
                     byte[] bitmapdata = bos.toByteArray();
-                    encodeImageString = android.util.Base64.encodeToString(bitmapdata, Base64.DEFAULT);
-
-                    /*FileOutputStream fos = new FileOutputStream(f);
+                    FileOutputStream fos = new FileOutputStream(f);
                     fos.write(bitmapdata);
                     fos.flush();
-                    fos.close();*/
+                    fos.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                listImages.add(encodeImageString);
+                listImages.add(f);
                 //Log.e("проверка листа", listImages.size() + "" + f.toString());
                 sendPhoto.setVisibility(View.VISIBLE);
             }
         });
-
     }
-
-
 }
