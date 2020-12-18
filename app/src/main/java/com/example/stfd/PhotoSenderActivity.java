@@ -33,10 +33,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -56,6 +59,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
         myAdapter = new MyAdapter(this, smallImages);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         photoEasy = PhotoEasy.builder()
                 .setActivity(this)
                 .setStorageType(PhotoEasy.StorageType.media)
@@ -67,8 +71,10 @@ public class PhotoSenderActivity extends AppCompatActivity {
             public void onClick(View v) {
                 AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
                 RequestParams params = new RequestParams();
+                File[] files = new File[listImages.size()];
+                listImages.toArray(files);
                 try {
-                    params.put("file_upload", listImages.get(0), "application/octet-stream");
+                    params.put("file_upload[]", files);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -91,23 +97,6 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 photoEasy.startActivityForResult(PhotoSenderActivity.this);
             }
         });
-        String url = "https://172.16.0.227:600/api/upload_file";
-        AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
-        RequestParams params = new RequestParams();
-        params.put("q", "android");
-        params.put("rsz", "8");
-        client.get(url, params, new TextHttpResponseHandler() {
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                Log.e("ответ","не ок");
-            }
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                Log.e("ответ","все ок");
-            }
-        });
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
@@ -115,15 +104,23 @@ public class PhotoSenderActivity extends AppCompatActivity {
         photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
             @Override
             public void onFinish(Bitmap thumbnail) {
-                smallImages.add(thumbnail);
-                myAdapter.notifyItemInserted(smallImages.size()-1);
-                File f = new File(context.getCacheDir(), "temporary_file.jpg");
+                if (thumbnail == null){
+                    Log.e("ошибка","ошибка");
+                }
+                Bitmap smallBitmap = Bitmap.createScaledBitmap(thumbnail,600, 800, true);
+                smallImages.add(smallBitmap);
+                //myAdapter.notifyItemInserted(smallImages.size()-1);
+                File f = new File(context.getCacheDir(), createFileName());
                 try {
                     f.createNewFile();
                     Bitmap bitmap = thumbnail;
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
                     byte[] bitmapdata = bos.toByteArray();
+                    int bitmapdataSize = bitmapdata.length;
+                    if (bitmapdataSize > 2000000){
+                        bitmapdata = resizeBitmapData(bitmap, bos, 2000000);
+                    }
                     FileOutputStream fos = new FileOutputStream(f);
                     fos.write(bitmapdata);
                     fos.flush();
@@ -132,9 +129,31 @@ public class PhotoSenderActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 listImages.add(f);
-                //Log.e("проверка листа", listImages.size() + "" + f.toString());
                 sendPhoto.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    private byte[] resizeBitmapData (Bitmap bitmap, ByteArrayOutputStream outputStream, int maxSize) {
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, outputStream);
+        byte[] bitmapdata = outputStream.toByteArray();
+        int bitmapdataSize = bitmapdata.length;
+        while (bitmapdataSize > maxSize){
+            bitmap = Bitmap.createScaledBitmap(bitmap,(int)( bitmap.getWidth()*0.95), (int)( bitmap.getHeight()*0.95), true);
+            outputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, outputStream);
+            bitmapdata = outputStream.toByteArray();
+            bitmapdataSize = bitmapdata.length;
+        }
+        return bitmapdata;
+    }
+
+    private String createFileName(){
+        UUID uuid = UUID.randomUUID();
+        String pattern = "dd.MM.yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(new Date());
+        String fileName = uuid.toString() + "_" + date + ".jpg";
+        return fileName;
     }
 }
