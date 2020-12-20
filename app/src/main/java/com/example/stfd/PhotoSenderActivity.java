@@ -14,14 +14,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
-import com.android.volley.AuthFailureError;
+/*import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.Volley;*/
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -44,28 +45,43 @@ import java.util.UUID;
 import cz.msebera.android.httpclient.Header;
 
 public class PhotoSenderActivity extends AppCompatActivity {
-    ImageView imageView;
-    PhotoEasy photoEasy;
-    List<Bitmap> smallImages = new ArrayList<>();
-    MyAdapter myAdapter;
-    Context context = this;
-    ArrayList<File> listImages = new ArrayList<>();
-    Button sendPhoto;
+
+    //ImageView imageView;
+    private PhotoEasy photoEasy;
+    private List<Bitmap> smallImages = new ArrayList<>();
+    private MyAdapter myAdapter;
+    private final Context context = this;
+    private ArrayList<File> listImages = new ArrayList<>();
+    private Button sendPhoto;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
-        RecyclerView recyclerView = findViewById(R.id.recycle_list);
-        myAdapter = new MyAdapter(this, smallImages);
+
+        //imageView = findViewById(R.id.image);
+        sendPhoto = findViewById(R.id.sendToServer);
+        final RelativeLayout relativeLayout = findViewById(R.id.preview_photo);
+
+        final RecyclerView recyclerView = findViewById(R.id.recycle_list);
+        myAdapter = new MyAdapter(this, smallImages, sendPhoto, relativeLayout);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
         photoEasy = PhotoEasy.builder()
                 .setActivity(this)
                 .setStorageType(PhotoEasy.StorageType.media)
                 .build();
-        imageView = findViewById(R.id.image);
-        sendPhoto = findViewById(R.id.sendToServer);
+
+        ImageView bigCrossView = findViewById(R.id.big_cross);
+        bigCrossView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                relativeLayout.setVisibility(View.INVISIBLE);
+            }
+        });
+
+
         sendPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,14 +106,16 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 });
             }
         });
-        Button cameraGo = findViewById(R.id.make_photo);
-        cameraGo.setOnClickListener(new View.OnClickListener() {
+
+        Button cameraGoButton = findViewById(R.id.make_photo);
+        cameraGoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 photoEasy.startActivityForResult(PhotoSenderActivity.this);
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -107,9 +125,9 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 if (thumbnail == null){
                     Log.e("ошибка","ошибка");
                 }
-                Bitmap smallBitmap = Bitmap.createScaledBitmap(thumbnail,600, 800, true);
-                smallImages.add(smallBitmap);
-                //myAdapter.notifyItemInserted(smallImages.size()-1);
+                //thumbnail = Bitmap.createScaledBitmap(thumbnail,600, 800, true);
+                smallImages.add(thumbnail);
+                myAdapter.notifyItemInserted(smallImages.size()-1);
                 File f = new File(context.getCacheDir(), createFileName());
                 try {
                     f.createNewFile();
@@ -135,13 +153,13 @@ public class PhotoSenderActivity extends AppCompatActivity {
     }
 
     private byte[] resizeBitmapData (Bitmap bitmap, ByteArrayOutputStream outputStream, int maxSize) {
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, outputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
         byte[] bitmapdata = outputStream.toByteArray();
         int bitmapdataSize = bitmapdata.length;
         while (bitmapdataSize > maxSize){
             bitmap = Bitmap.createScaledBitmap(bitmap,(int)( bitmap.getWidth()*0.95), (int)( bitmap.getHeight()*0.95), true);
             outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, outputStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             bitmapdata = outputStream.toByteArray();
             bitmapdataSize = bitmapdata.length;
         }

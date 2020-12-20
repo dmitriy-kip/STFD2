@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">STFD</string>
-    <string name="numdoc">Введите номер документа</string>
-    <string name="date">Дата</string>
+    <string name="numdoc">Введите номер заявки</string>
+    <string name="notice">Примечание</string>
     <string name="photo">ФОТО</string>
     <string name="send">Отправить</string>
 </resources>
