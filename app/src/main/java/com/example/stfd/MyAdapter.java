@@ -22,6 +22,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private List<Bitmap> smallImages;
     private Button b;
     private RelativeLayout r;
+    int count = 0;
     //private ImageView i;
 
     MyAdapter(Context context, List<Bitmap> list, Button button, RelativeLayout relativeLayout){
@@ -64,8 +65,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.crossView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 smallImages.remove(position);
-                notifyItemRemoved(position);
+                notifyDataSetChanged();
 
                 if (smallImages.size() == 0){
                     b.setVisibility(View.INVISIBLE);
