@@ -48,7 +48,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
 
     //ImageView imageView;
     private PhotoEasy photoEasy;
-    private List<Bitmap> smallImages = new ArrayList<>();
+    private List<Bitmap> bitmapList = new ArrayList<>();
     private MyAdapter myAdapter;
     private final Context context = this;
     private ArrayList<File> listImages = new ArrayList<>();
@@ -64,7 +64,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
         final RelativeLayout relativeLayout = findViewById(R.id.preview_photo);
 
         final RecyclerView recyclerView = findViewById(R.id.recycle_list);
-        myAdapter = new MyAdapter(this, smallImages, sendPhoto, relativeLayout);
+        myAdapter = new MyAdapter(this, bitmapList, sendPhoto, relativeLayout);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
@@ -85,10 +85,13 @@ public class PhotoSenderActivity extends AppCompatActivity {
         sendPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
-                RequestParams params = new RequestParams();
+                for (int i = 0; i< bitmapList.size(); i++){
+                    fillImageToList(bitmapList.get(i),  listImages);
+                }
                 File[] files = new File[listImages.size()];
                 listImages.toArray(files);
+                AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
+                RequestParams params = new RequestParams();
                 try {
                     params.put("file_upload[]", files);
                 } catch (FileNotFoundException e) {
@@ -122,31 +125,8 @@ public class PhotoSenderActivity extends AppCompatActivity {
         photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
             @Override
             public void onFinish(Bitmap thumbnail) {
-                if (thumbnail == null){
-                    Log.e("ошибка","ошибка");
-                }
-                //thumbnail = Bitmap.createScaledBitmap(thumbnail,600, 800, true);
-                smallImages.add(thumbnail);
-                myAdapter.notifyItemInserted(smallImages.size()-1);
-                File f = new File(context.getCacheDir(), createFileName());
-                try {
-                    f.createNewFile();
-                    Bitmap bitmap = thumbnail;
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-                    byte[] bitmapdata = bos.toByteArray();
-                    int bitmapdataSize = bitmapdata.length;
-                    if (bitmapdataSize > 2000000){
-                        bitmapdata = resizeBitmapData(bitmap, bos, 2000000);
-                    }
-                    FileOutputStream fos = new FileOutputStream(f);
-                    fos.write(bitmapdata);
-                    fos.flush();
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                listImages.add(f);
+                bitmapList.add(thumbnail);
+                myAdapter.notifyItemInserted(bitmapList.size()-1);
                 sendPhoto.setVisibility(View.VISIBLE);
             }
         });
@@ -173,5 +153,26 @@ public class PhotoSenderActivity extends AppCompatActivity {
         String date = simpleDateFormat.format(new Date());
         String fileName = uuid.toString() + "_" + date + ".jpg";
         return fileName;
+    }
+
+    private void fillImageToList (Bitmap bitmap, ArrayList<File> listImages) {
+        File f = new File(context.getCacheDir(), createFileName());
+        try {
+            f.createNewFile();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
+            byte[] bitmapdata = bos.toByteArray();
+            int bitmapdataSize = bitmapdata.length;
+            if (bitmapdataSize > 2000000){
+                bitmapdata = resizeBitmapData(bitmap, bos, 2000000);
+            }
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        listImages.add(f);
     }
 }
