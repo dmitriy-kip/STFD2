@@ -9,21 +9,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
-/*import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;*/
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -38,9 +31,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
@@ -54,6 +45,8 @@ public class PhotoSenderActivity extends AppCompatActivity {
     private final Context context = this;
     private ArrayList<File> listImages = new ArrayList<>();
     private Button sendPhoto;
+    private String numDoc;
+    private String notice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +79,11 @@ public class PhotoSenderActivity extends AppCompatActivity {
         sendPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final EditText editNumDoc = findViewById(R.id.edit_num_doc);
+                final EditText editNotice = findViewById(R.id.edit_notice);
+                numDoc = editNumDoc.getText().toString();
+                notice = editNotice.getText().toString();
+
                 for (int i = 0; i< bitmapList.size(); i++){
                     fillImageToList(bitmapList.get(i),  listImages);
                 }
@@ -101,10 +99,18 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 client.post("https://172.16.0.227:600/api/upload_file",params,new TextHttpResponseHandler(){
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        Toast.makeText(PhotoSenderActivity.this, "Не удалось отправить", Toast.LENGTH_LONG).show();
                         Log.e("ответ", "не ок " + responseString);
                     }
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                        editNumDoc.getText().clear();
+                        editNotice.getText().clear();
+                        listImages.clear();
+                        myAdapter.notifyDataSetChanged();
+                        setVisible(false);
+                        Toast.makeText(PhotoSenderActivity.this, "Информация успешено отправлена", Toast.LENGTH_LONG).show();
+                        invisibleSendPhotoButton();
                         Log.e("ответ","все ок " + responseString);
                     }
                 });
@@ -118,6 +124,10 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 photoEasy.startActivityForResult(PhotoSenderActivity.this);
             }
         });
+    }
+
+    private void invisibleSendPhotoButton() {
+        sendPhoto.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -176,4 +186,5 @@ public class PhotoSenderActivity extends AppCompatActivity {
         }
         listImages.add(f);
     }
+    
 }

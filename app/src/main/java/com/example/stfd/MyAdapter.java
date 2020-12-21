@@ -22,15 +22,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private List<Bitmap> smallImages;
     private Button b;
     private RelativeLayout r;
-    int count = 0;
-    //private ImageView i;
 
     MyAdapter(Context context, List<Bitmap> list, Button button, RelativeLayout relativeLayout){
         this.smallImages = list;
         this.inflater = LayoutInflater.from(context);
         this.b = button;
         this.r = relativeLayout;
-        //this.i = imageView;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -65,8 +62,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.crossView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 smallImages.remove(position);
                 notifyDataSetChanged();
 
