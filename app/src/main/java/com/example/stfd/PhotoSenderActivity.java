@@ -48,7 +48,7 @@ import cz.msebera.android.httpclient.Header;
 public class PhotoSenderActivity extends AppCompatActivity {
 
     //ImageView imageView;
-    private static final int CAMERA_REQUEST = 0;
+    private PhotoEasy photoEasy;
     private List<Bitmap> bitmapList = new ArrayList<>();
     private MyAdapter myAdapter;
     private final Context context = this;
@@ -59,6 +59,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
+
         //imageView = findViewById(R.id.image);
         sendPhoto = findViewById(R.id.sendToServer);
         final RelativeLayout relativeLayout = findViewById(R.id.preview_photo);
@@ -67,6 +68,11 @@ public class PhotoSenderActivity extends AppCompatActivity {
         myAdapter = new MyAdapter(this, bitmapList, sendPhoto, relativeLayout);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        photoEasy = PhotoEasy.builder()
+                .setActivity(this)
+                .setStorageType(PhotoEasy.StorageType.media)
+                .build();
 
         ImageView bigCrossView = findViewById(R.id.big_cross);
         bigCrossView.setOnClickListener(new View.OnClickListener() {
@@ -109,8 +115,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
         cameraGoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, CAMERA_REQUEST);
+                photoEasy.startActivityForResult(PhotoSenderActivity.this);
             }
         });
     }
@@ -118,12 +123,14 @@ public class PhotoSenderActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Bitmap thumbnailBitmap = (Bitmap) data.getExtras().get("data");
-            bitmapList.add(thumbnailBitmap);
-            myAdapter.notifyItemInserted(bitmapList.size() - 1);
-            sendPhoto.setVisibility(View.VISIBLE);
-        }
+        photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
+            @Override
+            public void onFinish(Bitmap thumbnail) {
+                bitmapList.add(thumbnail);
+                myAdapter.notifyItemInserted(bitmapList.size()-1);
+                sendPhoto.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private byte[] resizeBitmapData (Bitmap bitmap, ByteArrayOutputStream outputStream, int maxSize) {
