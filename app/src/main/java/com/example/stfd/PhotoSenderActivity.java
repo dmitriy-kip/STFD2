@@ -3,12 +3,14 @@ package com.example.stfd;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -53,12 +55,14 @@ public class PhotoSenderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
 
+        final RelativeLayout progressCircle = findViewById(R.id.progress_circular1);
+
         //imageView = findViewById(R.id.image);
         sendPhoto = findViewById(R.id.sendToServer);
-        final RelativeLayout relativeLayout = findViewById(R.id.preview_photo);
+        final RelativeLayout previewPhoto = findViewById(R.id.preview_photo);
 
         final RecyclerView recyclerView = findViewById(R.id.recycle_list);
-        myAdapter = new MyAdapter(this, bitmapList, sendPhoto, relativeLayout);
+        myAdapter = new MyAdapter(this, bitmapList, sendPhoto, previewPhoto);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
@@ -71,7 +75,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
         bigCrossView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                relativeLayout.setVisibility(View.INVISIBLE);
+                previewPhoto.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -79,6 +83,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
         sendPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressCircle.setVisibility(View.VISIBLE);
                 final EditText editNumDoc = findViewById(R.id.edit_num_doc);
                 final EditText editNotice = findViewById(R.id.edit_notice);
                 numDoc = editNumDoc.getText().toString();
@@ -100,6 +105,8 @@ public class PhotoSenderActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         Toast.makeText(PhotoSenderActivity.this, "Не удалось отправить", Toast.LENGTH_LONG).show();
+                        progressCircle.setVisibility(View.INVISIBLE);
+
                         Log.e("ответ", "не ок " + responseString);
                     }
                     @Override
@@ -108,11 +115,13 @@ public class PhotoSenderActivity extends AppCompatActivity {
                         editNotice.getText().clear();
                         listImages.clear();
                         myAdapter.notifyDataSetChanged();
-                        setVisible(false);
                         Toast.makeText(PhotoSenderActivity.this, "Информация успешено отправлена", Toast.LENGTH_LONG).show();
-                        invisibleSendPhotoButton();
+                        sendPhoto.setVisibility(View.INVISIBLE);
+                        progressCircle.setVisibility(View.INVISIBLE);
+
                         Log.e("ответ","все ок " + responseString);
                     }
+
                 });
             }
         });
@@ -122,6 +131,16 @@ public class PhotoSenderActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 photoEasy.startActivityForResult(PhotoSenderActivity.this);
+            }
+        });
+
+        Button galleryOpen = findViewById(R.id.gallery);
+        galleryOpen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent, 2);
             }
         });
     }
@@ -136,11 +155,26 @@ public class PhotoSenderActivity extends AppCompatActivity {
         photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
             @Override
             public void onFinish(Bitmap thumbnail) {
-                bitmapList.add(thumbnail);
-                myAdapter.notifyItemInserted(bitmapList.size()-1);
-                sendPhoto.setVisibility(View.VISIBLE);
+                addPhoto(thumbnail);
             }
         });
+
+        if (resultCode == RESULT_OK) {
+            if(requestCode == 2) {
+                Uri imageUri = data.getData();
+                Bitmap bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (bitmap == null) {
+                    Toast.makeText(PhotoSenderActivity.this, "Не удалось получить фаил", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                addPhoto(bitmap);
+            }
+        }
     }
 
     private byte[] resizeBitmapData (Bitmap bitmap, ByteArrayOutputStream outputStream, int maxSize) {
@@ -185,6 +219,12 @@ public class PhotoSenderActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         listImages.add(f);
+    }
+
+    private void addPhoto(Bitmap bitmap){
+        bitmapList.add(bitmap);
+        myAdapter.notifyItemInserted(bitmapList.size()-1);
+        sendPhoto.setVisibility(View.VISIBLE);
     }
     
 }

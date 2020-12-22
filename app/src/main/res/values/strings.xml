@@ -3,5 +3,6 @@
     <string name="numdoc">Введите номер заявки</string>
     <string name="notice">Примечание</string>
     <string name="photo">ФОТО</string>
-    <string name="send">Отправить</string>
+    <string name="send">Отправ.</string>
+    <string name="gallery">галерея</string>
 </resources>
