@@ -101,6 +101,8 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
+                params.put("income_num", numDoc);
+                params.put("file_desc", notice);
                 client.post("https://172.16.0.227:600/api/upload_file",params,new TextHttpResponseHandler(){
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
@@ -113,8 +115,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
                         editNumDoc.getText().clear();
                         editNotice.getText().clear();
-                        listImages.clear();
-                        myAdapter.notifyDataSetChanged();
+                        myAdapter.clear();
                         Toast.makeText(PhotoSenderActivity.this, "Информация успешено отправлена", Toast.LENGTH_LONG).show();
                         sendPhoto.setVisibility(View.INVISIBLE);
                         progressCircle.setVisibility(View.INVISIBLE);

@@ -79,4 +79,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         return smallImages.size();
     }
 
+    public void clear(){
+        smallImages.clear();
+        notifyDataSetChanged();
+    }
 }
