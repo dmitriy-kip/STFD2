@@ -3,6 +3,7 @@ package com.example.stfd;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -46,7 +47,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
     private MyAdapter myAdapter;
     private final Context context = this;
     private ArrayList<File> listImages = new ArrayList<>();
-    private Button sendPhoto;
+    private ImageView sendPhoto;
     private String numDoc;
     private String notice;
 
@@ -127,7 +128,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
             }
         });
 
-        Button cameraGoButton = findViewById(R.id.make_photo);
+        ImageView cameraGoButton = findViewById(R.id.make_photo);
         cameraGoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +136,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
             }
         });
 
-        Button galleryOpen = findViewById(R.id.gallery);
+        ImageView galleryOpen = findViewById(R.id.gallery);
         galleryOpen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

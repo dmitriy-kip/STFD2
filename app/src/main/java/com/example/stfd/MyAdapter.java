@@ -20,13 +20,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     private LayoutInflater inflater;
     private List<Bitmap> smallImages;
-    private Button b;
+    private ImageView sendButton;
     private RelativeLayout r;
 
-    MyAdapter(Context context, List<Bitmap> list, Button button, RelativeLayout relativeLayout){
+    MyAdapter(Context context, List<Bitmap> list, ImageView button, RelativeLayout relativeLayout){
         this.smallImages = list;
         this.inflater = LayoutInflater.from(context);
-        this.b = button;
+        this.sendButton = button;
         this.r = relativeLayout;
     }
 
@@ -66,7 +66,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 notifyDataSetChanged();
 
                 if (smallImages.size() == 0){
-                    b.setVisibility(View.INVISIBLE);
+                    sendButton.setVisibility(View.INVISIBLE);
                 }
 
                 Log.e("size", "" + smallImages.size());
