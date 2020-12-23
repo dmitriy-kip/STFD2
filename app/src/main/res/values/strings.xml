@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">STFD</string>
+    <string name="app_name">ЦОГ scanner</string>
     <string name="numdoc">Введите номер заявки</string>
     <string name="notice">Примечание</string>
     <string name="photo">ФОТО</string>
