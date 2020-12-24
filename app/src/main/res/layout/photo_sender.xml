@@ -7,6 +7,8 @@
     android:paddingVertical="8dp"
     android:backgroundTint="#000000">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,12 +46,16 @@
 
     </LinearLayout>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycle_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/buttons"
         android:layout_marginVertical="40dp"/>
+
+
+
 
     <LinearLayout
         android:id="@+id/buttons"
@@ -127,6 +133,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
     </RelativeLayout>
+
+
 
 
 </RelativeLayout>
