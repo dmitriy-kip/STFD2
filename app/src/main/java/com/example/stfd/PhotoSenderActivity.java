@@ -117,6 +117,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
                         editNumDoc.getText().clear();
                         editNotice.getText().clear();
                         myAdapter.clear();
+                        listImages.clear();
                         Toast.makeText(PhotoSenderActivity.this, "Информация успешено отправлена", Toast.LENGTH_LONG).show();
                         sendPhoto.setVisibility(View.INVISIBLE);
                         progressCircle.setVisibility(View.INVISIBLE);
