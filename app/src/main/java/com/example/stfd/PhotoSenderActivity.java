@@ -45,10 +45,10 @@ public class PhotoSenderActivity extends AppCompatActivity {
 
     //ImageView imageView;
     private PhotoEasy photoEasy;
-    private List<Bitmap> bitmapList = new ArrayList<>();
+    private final List<Bitmap> bitmapList = new ArrayList<>();
     private MyAdapter myAdapter;
     private final Context context = this;
-    private ArrayList<File> listImages = new ArrayList<>();
+    private final ArrayList<File> listImages = new ArrayList<>();
     private ImageView sendPhoto;
     private String numDoc;
     private String notice;
@@ -57,6 +57,8 @@ public class PhotoSenderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
+
+        //final Utils utils = new Utils();
 
         final RelativeLayout progressCircle = findViewById(R.id.progress_circular1);
 
@@ -86,7 +88,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
         sendPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isOnline(context)){
+                if (!Utils.isOnline(context)){
                     Toast.makeText(PhotoSenderActivity.this, "Нет подключения к интернету", Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -97,7 +99,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 notice = editNotice.getText().toString();
 
                 for (int i = 0; i< bitmapList.size(); i++){
-                    fillImageToList(bitmapList.get(i),  listImages);
+                    Utils.fillImageToList(bitmapList.get(i),  listImages, context);
                 }
                 File[] files = new File[listImages.size()];
                 listImages.toArray(files);
@@ -154,10 +156,6 @@ public class PhotoSenderActivity extends AppCompatActivity {
         });
     }
 
-    private void invisibleSendPhotoButton() {
-        sendPhoto.setVisibility(View.INVISIBLE);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -186,66 +184,9 @@ public class PhotoSenderActivity extends AppCompatActivity {
         }
     }
 
-    private byte[] resizeBitmapData (Bitmap bitmap, ByteArrayOutputStream outputStream, int maxSize) {
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-        byte[] bitmapdata = outputStream.toByteArray();
-        int bitmapdataSize = bitmapdata.length;
-        while (bitmapdataSize > maxSize){
-            bitmap = Bitmap.createScaledBitmap(bitmap,(int)( bitmap.getWidth()*0.95), (int)( bitmap.getHeight()*0.95), true);
-            outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            bitmapdata = outputStream.toByteArray();
-            bitmapdataSize = bitmapdata.length;
-        }
-        return bitmapdata;
-    }
-
-    private String createFileName(){
-        UUID uuid = UUID.randomUUID();
-        String pattern = "dd.MM.yyyy";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        String date = simpleDateFormat.format(new Date());
-        String fileName = uuid.toString() + "_" + date + ".jpg";
-        return fileName;
-    }
-
-    private void fillImageToList (Bitmap bitmap, ArrayList<File> listImages) {
-        File f = new File(context.getCacheDir(), createFileName());
-        try {
-            f.createNewFile();
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-            byte[] bitmapdata = bos.toByteArray();
-            int bitmapdataSize = bitmapdata.length;
-            if (bitmapdataSize > 2000000){
-                bitmapdata = resizeBitmapData(bitmap, bos, 2000000);
-            }
-            FileOutputStream fos = new FileOutputStream(f);
-            fos.write(bitmapdata);
-            fos.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        listImages.add(f);
-    }
-
     private void addPhoto(Bitmap bitmap){
         bitmapList.add(bitmap);
         myAdapter.notifyItemInserted(bitmapList.size()-1);
         sendPhoto.setVisibility(View.VISIBLE);
     }
-
-    public static boolean isOnline(Context context)
-    {
-        ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting())
-        {
-            return true;
-        }
-        return false;
-    }
-    
 }
