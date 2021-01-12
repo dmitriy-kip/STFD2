@@ -1,5 +1,6 @@
 package com.example.stfd;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -58,11 +63,8 @@ public class PhotoSenderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
 
-        //final Utils utils = new Utils();
-
         final RelativeLayout progressCircle = findViewById(R.id.progress_circular1);
 
-        //imageView = findViewById(R.id.image);
         sendPhoto = findViewById(R.id.sendToServer);
         final RelativeLayout previewPhoto = findViewById(R.id.preview_photo);
 
@@ -99,10 +101,11 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 notice = editNotice.getText().toString();
 
                 for (int i = 0; i< bitmapList.size(); i++){
-                    Utils.fillImageToList(bitmapList.get(i),  listImages, context);
+                    Utils.fillImageToList(bitmapList.get(i), listImages, context);
                 }
                 File[] files = new File[listImages.size()];
                 listImages.toArray(files);
+
                 AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
                 RequestParams params = new RequestParams();
                 try {
@@ -114,13 +117,6 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 params.put("file_desc", notice);
                 client.post("https://172.16.0.227:600/api/upload_file",params,new TextHttpResponseHandler(){
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        Toast.makeText(PhotoSenderActivity.this, "Не удалось отправить", Toast.LENGTH_LONG).show();
-                        progressCircle.setVisibility(View.INVISIBLE);
-
-                        Log.e("ответ", "не ок " + responseString);
-                    }
-                    @Override
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
                         editNumDoc.getText().clear();
                         editNotice.getText().clear();
@@ -131,6 +127,14 @@ public class PhotoSenderActivity extends AppCompatActivity {
                         progressCircle.setVisibility(View.INVISIBLE);
 
                         Log.e("ответ","все ок " + responseString);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        Toast.makeText(PhotoSenderActivity.this, "Не удалось отправить", Toast.LENGTH_LONG).show();
+                        progressCircle.setVisibility(View.INVISIBLE);
+
+                        Log.e("ответ", "не ок " + responseString);
                     }
 
                 });
@@ -181,6 +185,41 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 }
                 addPhoto(bitmap);
             }
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            RelativeLayout previewPhoto = findViewById(R.id.preview_photo);
+            if (previewPhoto.getVisibility() == View.VISIBLE)
+                previewPhoto.setVisibility(View.INVISIBLE);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu1, menu);
+        return true;
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Toast.makeText(this, "Работает", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.history:
+                Intent intent = new Intent(PhotoSenderActivity.this, MainActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

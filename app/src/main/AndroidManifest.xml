@@ -14,6 +14,9 @@
         android:roundIcon="@drawable/logopng2"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity"
+            android:label="@string/history">
+        </activity>
 
         <activity android:name=".PhotoSenderActivity"
             android:windowSoftInputMode="adjustPan"
