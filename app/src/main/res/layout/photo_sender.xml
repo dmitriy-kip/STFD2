@@ -1,146 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="8dp"
-    android:backgroundTint="#000000">
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
 
-
-    <LinearLayout
+    <fragment
+        android:id="@+id/fragment2"
+        android:name="com.example.stfd.PhotoSenderFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/edit_num_doc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/numdoc"
-            android:layout_marginVertical="40dp"/>
-        <!--android:backgroundTint="@android:color/transparent"-->
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:text="@string/notice"
-            android:textSize="18sp"/>
-
-        <EditText
-            android:id="@+id/edit_notice"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_marginVertical="8dp"
-            android:padding="16dp"
-            android:gravity="top|left"
-            android:inputType="textMultiLine"
-            android:lines="5"
-            tools:ignore="RtlHardcoded"
-            android:background="@drawable/edit_style"/>
-
-    </LinearLayout>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycle_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/buttons"
-        android:layout_marginVertical="40dp"/>
-
-
-
-
-    <LinearLayout
-        android:id="@+id/buttons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/sendToServer"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/send"
-            android:layout_marginHorizontal="16dp"
-            android:visibility="invisible"/>
-
-        <ImageView
-            android:id="@+id/make_photo"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/photo"
-            android:layout_marginHorizontal="16dp"/>
-
-        <ImageView
-            android:id="@+id/gallery"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/gallery"
-            android:layout_marginHorizontal="16dp"/>
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/preview_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="invisible">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#B2FFFFFF"
-            android:clickable="true"
-            android:focusable="true" />
-
-        <ImageView
-            android:id="@+id/big_photo"
-            android:layout_width="300dp"
-            android:layout_height="400dp"
-            android:layout_centerInParent="true" />
-
-        <ImageView
-            android:id="@+id/big_cross"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/cross1" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/progress_circular1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        >
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#B2FFFFFF"
-            android:clickable="true"
-            android:focusable="true" />
-        <ProgressBar
-            android:id="@+id/loading_indicator"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-    </RelativeLayout>
-
-
-
-
-</RelativeLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_photo_sender" />
+</LinearLayout>

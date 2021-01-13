@@ -63,7 +63,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
 
-        final RelativeLayout progressCircle = findViewById(R.id.progress_circular1);
+        /*final RelativeLayout progressCircle = findViewById(R.id.progress_circular1);
 
         sendPhoto = findViewById(R.id.sendToServer);
         final RelativeLayout previewPhoto = findViewById(R.id.preview_photo);
@@ -157,7 +157,9 @@ public class PhotoSenderActivity extends AppCompatActivity {
                 intent.setType("image/*");
                 startActivityForResult(intent, 2);
             }
-        });
+        });*/
+
+
     }
 
     @Override
@@ -206,7 +208,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
         return true;
     }
 
-    @SuppressLint("NonConstantResourceId")
+   /* @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -221,7 +223,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
     private void addPhoto(Bitmap bitmap){
         bitmapList.add(bitmap);

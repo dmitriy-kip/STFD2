@@ -5,6 +5,6 @@
     <string name="photo">ФОТО</string>
     <string name="send">Отправ.</string>
     <string name="gallery">галерея</string>
-    <string name="settings">Settings</string>
-    <string name="history">History</string>
+    <string name="settings">Настройки</string>
+    <string name="history">История</string>
 </resources>
