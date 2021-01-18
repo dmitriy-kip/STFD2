@@ -42,26 +42,38 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
 
-public class PhotoSenderActivity extends AppCompatActivity {
+public class PhotoSenderActivity extends AppCompatActivity implements PhotoSenderFragment.OnSelectedButtonListener{
 
     //ImageView imageView;
     private PhotoEasy photoEasy;
-    private final List<Bitmap> bitmapList = new ArrayList<>();
     private MyAdapter myAdapter;
-    private final Context context = this;
-    private final ArrayList<File> listImages = new ArrayList<>();
+    private final List<Bitmap> bitmapList = new ArrayList<>();
     private ImageView sendPhoto;
-    private String numDoc;
-    private String notice;
+    private final ArrayList<File> listImages = new ArrayList<>();
+    private final Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
+
+        final RelativeLayout previewPhoto = findViewById(R.id.preview_photo);
+        sendPhoto = findViewById(R.id.sendToServer);
+
+        final RecyclerView recyclerView = findViewById(R.id.recycle_list);
+        myAdapter = new MyAdapter(this, bitmapList, sendPhoto, previewPhoto);
+        recyclerView.setAdapter(myAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        photoEasy = PhotoEasy.builder()
+                .setActivity(this)
+                .setStorageType(PhotoEasy.StorageType.media)
+                .build();
 
         /*final RelativeLayout progressCircle = findViewById(R.id.progress_circular1);
 
@@ -163,6 +175,75 @@ public class PhotoSenderActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onSendPhoto() {
+        if (!Utils.isOnline(context)){
+            Toast.makeText(PhotoSenderActivity.this, "Нет подключения к интернету", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        final RelativeLayout progressCircle = findViewById(R.id.progress_circular1);
+        final ImageView sendPhoto = findViewById(R.id.sendToServer);
+
+        progressCircle.setVisibility(View.VISIBLE);
+        final EditText editNumDoc = findViewById(R.id.edit_num_doc);
+        final EditText editNotice = findViewById(R.id.edit_notice);
+        String numDoc = editNumDoc.getText().toString();
+        String notice = editNotice.getText().toString();
+
+        for (int i = 0; i< bitmapList.size(); i++){
+            Utils.fillImageToList(bitmapList.get(i), listImages, context);
+        }
+        File[] files = new File[listImages.size()];
+        listImages.toArray(files);
+
+        AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
+        RequestParams params = new RequestParams();
+        try {
+            params.put("file_upload[]", files);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        params.put("income_num", numDoc);
+        params.put("file_desc", notice);
+        client.post("https://172.16.0.227:600/api/upload_file",params,new TextHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                editNumDoc.getText().clear();
+                editNotice.getText().clear();
+                myAdapter.clear();
+                listImages.clear();
+                Toast.makeText(PhotoSenderActivity.this, "Информация успешено отправлена", Toast.LENGTH_LONG).show();
+                sendPhoto.setVisibility(View.INVISIBLE);
+                progressCircle.setVisibility(View.INVISIBLE);
+
+                Log.e("ответ","все ок " + responseString);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Toast.makeText(PhotoSenderActivity.this, "Не удалось отправить", Toast.LENGTH_LONG).show();
+                progressCircle.setVisibility(View.INVISIBLE);
+
+                Log.e("ответ", "не ок " + responseString);
+            }
+
+        });
+
+    }
+
+    @Override
+    public void onCameraGoButton() {
+        photoEasy.startActivityForResult(PhotoSenderActivity.this);
+    }
+
+    @Override
+    public void onGalleryOpen() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, 2);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
@@ -208,7 +289,7 @@ public class PhotoSenderActivity extends AppCompatActivity {
         return true;
     }
 
-   /* @SuppressLint("NonConstantResourceId")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -223,11 +304,13 @@ public class PhotoSenderActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }*/
+    }
 
     private void addPhoto(Bitmap bitmap){
         bitmapList.add(bitmap);
         myAdapter.notifyItemInserted(bitmapList.size()-1);
         sendPhoto.setVisibility(View.VISIBLE);
     }
+
+
 }
