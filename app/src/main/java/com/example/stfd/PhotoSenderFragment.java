@@ -50,9 +50,6 @@ public class PhotoSenderFragment extends Fragment {
         ImageView sendPhoto = rootView.findViewById(R.id.sendToServer);
         final RelativeLayout previewPhoto = rootView.findViewById(R.id.preview_photo);
 
-
-
-
         ImageView bigCrossView = rootView.findViewById(R.id.big_cross);
         bigCrossView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +57,6 @@ public class PhotoSenderFragment extends Fragment {
                 previewPhoto.setVisibility(View.INVISIBLE);
             }
         });
-
 
         sendPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +80,7 @@ public class PhotoSenderFragment extends Fragment {
                 listener.onGalleryOpen();
             }
         });
+
         return rootView;
     }
 
