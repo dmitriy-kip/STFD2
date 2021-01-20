@@ -49,7 +49,7 @@ import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
 
-public class PhotoSenderActivity extends AppCompatActivity implements PhotoSenderFragment.OnSelectedButtonListener{
+public class PhotoSenderActivity extends AppCompatActivity implements PhotoSenderFragment.OnSelectedButtonListener, HistoryFragment.OnSelectedButtonListenerHistory{
 
     private PhotoEasy photoEasy;
     private MyAdapter myAdapter;
@@ -220,5 +220,10 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         bitmapList.add(bitmap);
         myAdapter.notifyItemInserted(bitmapList.size()-1);
         sendPhoto.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onFragmentInteraction(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }
