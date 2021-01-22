@@ -57,6 +57,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
     private ImageView sendPhoto;
     private final ArrayList<File> listImages = new ArrayList<>();
     private final Context context = this;
+    private FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +150,17 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
     }
 
     @Override
+    public void goToHistory() {
+        fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        HistoryFragment historyFragment = new HistoryFragment();
+        ft.replace(R.id.container, historyFragment, "historyFragment");
+        ft.addToBackStack(null);
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        ft.commit();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
@@ -182,19 +194,21 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
             RelativeLayout previewPhoto = findViewById(R.id.preview_photo);
             if (previewPhoto.getVisibility() == View.VISIBLE)
                 previewPhoto.setVisibility(View.INVISIBLE);
+            fm.popBackStack();
+            invalidateOptionsMenu();
             return true;
         }
-        return super.onKeyDown(keyCode, event);
+        return true;
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu1, menu);
         return true;
-    }
+    }*/
 
-    @SuppressLint("NonConstantResourceId")
+    /*@SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -203,7 +217,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
                 Toast.makeText(this, "Работает", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.history:
-                FragmentManager fm = getSupportFragmentManager();
+                fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 HistoryFragment historyFragment = new HistoryFragment();
                 ft.replace(R.id.container, historyFragment, "historyFragment");
@@ -214,7 +228,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
     private void addPhoto(Bitmap bitmap){
         bitmapList.add(bitmap);

@@ -3,6 +3,8 @@ package com.example.stfd;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,6 +31,18 @@ public class HistoryFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.history_menu, menu);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
@@ -44,5 +58,4 @@ public class HistoryFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
 }
