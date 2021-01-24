@@ -1,12 +1,8 @@
 package com.example.stfd;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -15,37 +11,35 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.stfd.Adapters.HistoryAdapter;
+import com.example.stfd.Adapters.MyAdapter;
+import com.example.stfd.DataBase.AppDataBase;
+import com.example.stfd.DataBase.HistoryDAO;
+import com.example.stfd.DataBase.HistoryEntity;
+import com.example.stfd.DataBase.SingletonAppDB;
+import com.example.stfd.MyPhotoEasy.OnPictureReady;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
-import com.thorny.photoeasy.OnPictureReady;
-import com.thorny.photoeasy.PhotoEasy;
+//import com.thorny.photoeasy.OnPictureReady;
+import com.example.stfd.MyPhotoEasy.PhotoEasy;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -58,6 +52,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
     private final ArrayList<File> listImages = new ArrayList<>();
     private final Context context = this;
     private FragmentManager fm;
+    private HistoryDAO historyDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +72,8 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
                 .setStorageType(PhotoEasy.StorageType.media)
                 .build();
 
+        AppDataBase db = SingletonAppDB.getInstance().getDatabase();
+        historyDAO = db.historyEntity();
 
     }
 
@@ -93,8 +90,8 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         progressCircle.setVisibility(View.VISIBLE);
         final EditText editNumDoc = findViewById(R.id.edit_num_doc);
         final EditText editNotice = findViewById(R.id.edit_notice);
-        String numDoc = editNumDoc.getText().toString();
-        String notice = editNotice.getText().toString();
+        final String numDoc = editNumDoc.getText().toString();
+        final String notice = editNotice.getText().toString();
 
         for (int i = 0; i< bitmapList.size(); i++){
             Utils.fillImageToList(bitmapList.get(i), listImages, context);
@@ -127,6 +124,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate()));
                 Toast.makeText(PhotoSenderActivity.this, "Не удалось отправить", Toast.LENGTH_LONG).show();
                 progressCircle.setVisibility(View.INVISIBLE);
 
@@ -165,7 +163,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         super.onActivityResult(requestCode, resultCode, data);
         photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
             @Override
-            public void onFinish(Bitmap thumbnail) {
+            public void onFinish(Bitmap thumbnail, Uri uri) {
                 addPhoto(thumbnail);
             }
         });
@@ -196,39 +194,11 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
                 previewPhoto.setVisibility(View.INVISIBLE);
             fm.popBackStack();
             invalidateOptionsMenu();
+            myAdapter.notifyDataSetChanged();
             return true;
         }
-        return true;
+        return super.onKeyDown(keyCode, event);
     }
-
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu1, menu);
-        return true;
-    }*/
-
-    /*@SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.settings:
-                Toast.makeText(this, "Работает", Toast.LENGTH_LONG).show();
-                return true;
-            case R.id.history:
-                fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                HistoryFragment historyFragment = new HistoryFragment();
-                ft.replace(R.id.container, historyFragment, "historyFragment");
-                ft.addToBackStack(null);
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                ft.commit();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
 
     private void addPhoto(Bitmap bitmap){
         bitmapList.add(bitmap);
@@ -237,7 +207,16 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
     }
 
     @Override
-    public void onFragmentInteraction(String title) {
-        getSupportActionBar().setTitle(title);
+    public void onFragmentInteraction(String title, int index) {
+        switch (index){
+            case 1:
+                getSupportActionBar().setTitle(title);
+                break;
+            case 2:
+                getSupportActionBar().setTitle(title);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                break;
+        }
+
     }
 }

@@ -1,18 +1,18 @@
-package com.example.stfd;
+package com.example.stfd.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.stfd.R;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private ImageView sendButton;
     private RelativeLayout r;
 
-    MyAdapter(Context context, List<Bitmap> list, ImageView button, RelativeLayout relativeLayout){
+    public MyAdapter(Context context, List<Bitmap> list, ImageView button, RelativeLayout relativeLayout){
         this.smallImages = list;
         this.inflater = LayoutInflater.from(context);
         this.sendButton = button;

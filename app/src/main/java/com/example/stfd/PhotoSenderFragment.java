@@ -1,44 +1,35 @@
 package com.example.stfd;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
-import com.thorny.photoeasy.PhotoEasy;
+import com.example.stfd.Adapters.HistoryAdapter;
+import com.example.stfd.Adapters.MyAdapter;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import cz.msebera.android.httpclient.Header;
 
 public class PhotoSenderFragment extends Fragment {
     private OnSelectedButtonListener listener;
+    private MyAdapter myAdapter;
+    private HistoryAdapter historyAdapter;
+    private final List<Bitmap> bitmapList = new ArrayList<>();
+    private ImageView sendPhoto;
 
     public interface OnSelectedButtonListener extends HistoryFragment.OnSelectedButtonListenerHistory{
         void onSendPhoto();
@@ -53,7 +44,7 @@ public class PhotoSenderFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_photo_sender, container, false);
         listener = (OnSelectedButtonListener) getActivity();
         if (listener != null) {
-            listener.onFragmentInteraction(getString(R.string.app_name));
+            listener.onFragmentInteraction(getString(R.string.app_name), 1);
         }
 
         ImageView sendPhoto = rootView.findViewById(R.id.sendToServer);
@@ -114,13 +105,6 @@ public class PhotoSenderFragment extends Fragment {
                 return true;
             case R.id.history:
                 listener.goToHistory();
-                /*fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                HistoryFragment historyFragment = new HistoryFragment();
-                ft.replace(R.id.container, historyFragment, "historyFragment");
-                ft.addToBackStack(null);
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                ft.commit();*/
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -142,5 +126,11 @@ public class PhotoSenderFragment extends Fragment {
             throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        listener.onFragmentInteraction(getString(R.string.app_name), 1);
     }
 }
