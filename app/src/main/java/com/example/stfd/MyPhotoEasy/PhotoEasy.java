@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.thorny.photoeasy.BitmapCreator;
 import com.thorny.photoeasy.DefaultStoragePermission;
@@ -97,7 +98,7 @@ public final class PhotoEasy {
         onPictureReady.onFinish(bitmap, lastUri);
     }
 
-    public final void startActivityForResult(final Activity activity) {
+    public final void startActivityForResult(final Fragment fragment) {
 
         if (enableRequestPermission)
             if (storageType == PhotoEasy.StorageType.external || storageType == PhotoEasy.StorageType.media) {
@@ -109,7 +110,7 @@ public final class PhotoEasy {
                 }
             }
 
-        final StorageUriHandler storageUriHandler = new StorageUriHandler(activity, fileName, mimeType);
+        final StorageUriHandler storageUriHandler = new StorageUriHandler(fragment.getActivity(), fileName, mimeType);
         Uri photoUri;
         switch (storageType) {
             case internal:
@@ -126,7 +127,7 @@ public final class PhotoEasy {
         lastUri = photoUri;
         final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-        activity.startActivityForResult(intent, REQUEST_CAMERA_KEY);
+        fragment.startActivityForResult(intent, REQUEST_CAMERA_KEY);
     }
 
     private boolean isExternalStorageWritable() {

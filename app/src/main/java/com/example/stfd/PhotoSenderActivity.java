@@ -52,32 +52,34 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
     private final ArrayList<File> listImages = new ArrayList<>();
     private final Context context = this;
     private FragmentManager fm;
-    private HistoryDAO historyDAO;
+    private PhotoSenderFragment photoSenderFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
 
-        final RelativeLayout previewPhoto = findViewById(R.id.preview_photo);
-        sendPhoto = findViewById(R.id.sendToServer);
+        /*final RelativeLayout previewPhoto = findViewById(R.id.preview_photo);
+        sendPhoto = findViewById(R.id.sendToServer);*/
 
-        final RecyclerView recyclerView = findViewById(R.id.recycle_list);
+        /*final RecyclerView recyclerView = findViewById(R.id.recycle_list);
         myAdapter = new MyAdapter(this, bitmapList, sendPhoto, previewPhoto);
         recyclerView.setAdapter(myAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));*/
 
-        photoEasy = PhotoEasy.builder()
+        /*photoEasy = PhotoEasy.builder()
                 .setActivity(this)
                 .setStorageType(PhotoEasy.StorageType.media)
-                .build();
+                .build();*/
 
-        AppDataBase db = SingletonAppDB.getInstance().getDatabase();
-        historyDAO = db.historyEntity();
-
+        FragmentManager fm = getSupportFragmentManager();
+        photoSenderFragment = new PhotoSenderFragment();;
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.container, photoSenderFragment, "photoSenderFragment");
+        ft.commit();
     }
 
-    @Override
+    /*@Override
     public void onSendPhoto() {
         if (!Utils.isOnline(context)){
             Toast.makeText(PhotoSenderActivity.this, "Нет подключения к интернету", Toast.LENGTH_LONG).show();
@@ -145,7 +147,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         startActivityForResult(intent, 2);
-    }
+    }*/
 
     @Override
     public void goToHistory() {
@@ -158,7 +160,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         ft.commit();
     }
 
-    @Override
+   /* @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
@@ -184,27 +186,30 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
                 addPhoto(bitmap);
             }
         }
-    }
+    }*/
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            RelativeLayout previewPhoto = findViewById(R.id.preview_photo);
-            if (previewPhoto.getVisibility() == View.VISIBLE)
-                previewPhoto.setVisibility(View.INVISIBLE);
-            fm.popBackStack();
+            if (!photoSenderFragment.isVisible()) {
+                try {
+                    fm.popBackStack();
+                } catch (Exception e) {
+
+                }
+            }
+            photoSenderFragment.onKeyDown();
             //invalidateOptionsMenu();
-            myAdapter.notifyDataSetChanged();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    private void addPhoto(Bitmap bitmap){
+/*    private void addPhoto(Bitmap bitmap){
         bitmapList.add(bitmap);
         myAdapter.notifyItemInserted(bitmapList.size()-1);
         sendPhoto.setVisibility(View.VISIBLE);
-    }
+    }*/
 
     @Override
     public void onFragmentInteraction(String title, int index) {

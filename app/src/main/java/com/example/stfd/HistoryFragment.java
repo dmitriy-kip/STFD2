@@ -2,6 +2,7 @@ package com.example.stfd;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ public class HistoryFragment extends Fragment {
     private OnSelectedButtonListenerHistory listener;
     private HistoryAdapter historyAdapter;
     private final List<HistoryEntity> historyItemList = new ArrayList<>();
-    HistoryDAO historyDAO;
+    private HistoryDAO historyDAO;
 
     public interface OnSelectedButtonListenerHistory{
         void onFragmentInteraction(String title, int index);
@@ -88,5 +89,11 @@ public class HistoryFragment extends Fragment {
             throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 }
