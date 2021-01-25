@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
@@ -52,13 +53,15 @@ public class HistoryFragment extends Fragment {
             listener.onFragmentInteraction(getString(R.string.history), 2);
         }
 
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+
         AppDataBase db = SingletonAppDB.getInstance().getDatabase();
         historyDAO = db.historyEntity();
         historyItemList.addAll(historyDAO.getAll());
 
         final RecyclerView recyclerViewHistory = rootView.findViewById(R.id.recycle_history);
         recyclerViewHistory.setLayoutManager(new LinearLayoutManager(getContext()));
-        historyAdapter = new HistoryAdapter(getContext(), historyItemList);
+        historyAdapter = new HistoryAdapter(getContext(), historyItemList, historyDAO, fm);
         recyclerViewHistory.setAdapter(historyAdapter);
 
         return rootView;

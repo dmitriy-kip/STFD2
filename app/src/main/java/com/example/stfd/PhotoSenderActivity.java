@@ -193,7 +193,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
             if (previewPhoto.getVisibility() == View.VISIBLE)
                 previewPhoto.setVisibility(View.INVISIBLE);
             fm.popBackStack();
-            invalidateOptionsMenu();
+            //invalidateOptionsMenu();
             myAdapter.notifyDataSetChanged();
             return true;
         }
@@ -208,12 +208,12 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
 
     @Override
     public void onFragmentInteraction(String title, int index) {
+        getSupportActionBar().setTitle(title);
         switch (index){
             case 1:
-                getSupportActionBar().setTitle(title);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 break;
             case 2:
-                getSupportActionBar().setTitle(title);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 break;
         }

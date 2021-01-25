@@ -9,14 +9,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stfd.Adapters.HistoryAdapter;
 import com.example.stfd.Adapters.MyAdapter;
@@ -46,6 +45,18 @@ public class PhotoSenderFragment extends Fragment {
         if (listener != null) {
             listener.onFragmentInteraction(getString(R.string.app_name), 1);
         }
+
+
+        Bundle args = getArguments();
+        if (args != null){
+            EditText docNumEdit = rootView.findViewById(R.id.edit_num_doc);
+            docNumEdit.setText(args.getString("numDoc"));
+
+            EditText noticeEdit = rootView.findViewById(R.id.edit_notice);
+            noticeEdit.setText(args.getString("notice"));
+        }
+
+
 
         ImageView sendPhoto = rootView.findViewById(R.id.sendToServer);
         final RelativeLayout previewPhoto = rootView.findViewById(R.id.preview_photo);
@@ -130,7 +141,19 @@ public class PhotoSenderFragment extends Fragment {
 
     @Override
     public void onResume() {
+        listener.onFragmentInteraction(getString(R.string.app_name), 1);
         super.onResume();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        listener.onFragmentInteraction(getString(R.string.app_name), 1);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         listener.onFragmentInteraction(getString(R.string.app_name), 1);
     }
 }
