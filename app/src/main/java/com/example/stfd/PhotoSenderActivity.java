@@ -40,6 +40,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -59,95 +60,12 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
 
-        /*final RelativeLayout previewPhoto = findViewById(R.id.preview_photo);
-        sendPhoto = findViewById(R.id.sendToServer);*/
-
-        /*final RecyclerView recyclerView = findViewById(R.id.recycle_list);
-        myAdapter = new MyAdapter(this, bitmapList, sendPhoto, previewPhoto);
-        recyclerView.setAdapter(myAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));*/
-
-        /*photoEasy = PhotoEasy.builder()
-                .setActivity(this)
-                .setStorageType(PhotoEasy.StorageType.media)
-                .build();*/
-
         FragmentManager fm = getSupportFragmentManager();
         photoSenderFragment = new PhotoSenderFragment();;
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(R.id.container, photoSenderFragment, "photoSenderFragment");
         ft.commit();
     }
-
-    /*@Override
-    public void onSendPhoto() {
-        if (!Utils.isOnline(context)){
-            Toast.makeText(PhotoSenderActivity.this, "Нет подключения к интернету", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        final RelativeLayout progressCircle = findViewById(R.id.progress_circular1);
-        final ImageView sendPhoto = findViewById(R.id.sendToServer);
-
-        progressCircle.setVisibility(View.VISIBLE);
-        final EditText editNumDoc = findViewById(R.id.edit_num_doc);
-        final EditText editNotice = findViewById(R.id.edit_notice);
-        final String numDoc = editNumDoc.getText().toString();
-        final String notice = editNotice.getText().toString();
-
-        for (int i = 0; i< bitmapList.size(); i++){
-            Utils.fillImageToList(bitmapList.get(i), listImages, context);
-        }
-        File[] files = new File[listImages.size()];
-        listImages.toArray(files);
-
-        AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
-        RequestParams params = new RequestParams();
-        try {
-            params.put("file_upload[]", files);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        params.put("income_num", numDoc);
-        params.put("file_desc", notice);
-        client.post("https://172.16.0.227:600/api/upload_file",params,new TextHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                editNumDoc.getText().clear();
-                editNotice.getText().clear();
-                myAdapter.clear();
-                listImages.clear();
-                Toast.makeText(PhotoSenderActivity.this, "Информация успешено отправлена", Toast.LENGTH_LONG).show();
-                sendPhoto.setVisibility(View.INVISIBLE);
-                progressCircle.setVisibility(View.INVISIBLE);
-
-                Log.e("ответ","все ок " + responseString);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate()));
-                Toast.makeText(PhotoSenderActivity.this, "Не удалось отправить", Toast.LENGTH_LONG).show();
-                progressCircle.setVisibility(View.INVISIBLE);
-
-                Log.e("ответ", "не ок " + responseString);
-            }
-
-        });
-
-    }
-
-    @Override
-    public void onCameraGoButton() {
-        photoEasy.startActivityForResult(PhotoSenderActivity.this);
-    }
-
-    @Override
-    public void onGalleryOpen() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, 2);
-    }*/
 
     @Override
     public void goToHistory() {
@@ -160,38 +78,10 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         ft.commit();
     }
 
-   /* @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
-            @Override
-            public void onFinish(Bitmap thumbnail, Uri uri) {
-                addPhoto(thumbnail);
-            }
-        });
-
-        if (resultCode == RESULT_OK) {
-            if(requestCode == 2) {
-                Uri imageUri = data.getData();
-                Bitmap bitmap = null;
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (bitmap == null) {
-                    Toast.makeText(PhotoSenderActivity.this, "Не удалось получить фаил", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                addPhoto(bitmap);
-            }
-        }
-    }*/
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (!photoSenderFragment.isVisible()) {
+            if (!Objects.equals(getSupportActionBar().getTitle(), getString(R.string.app_name))) {
                 try {
                     fm.popBackStack();
                 } catch (Exception e) {
@@ -205,11 +95,6 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         return super.onKeyDown(keyCode, event);
     }
 
-/*    private void addPhoto(Bitmap bitmap){
-        bitmapList.add(bitmap);
-        myAdapter.notifyItemInserted(bitmapList.size()-1);
-        sendPhoto.setVisibility(View.VISIBLE);
-    }*/
 
     @Override
     public void onFragmentInteraction(String title, int index) {
@@ -224,4 +109,6 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         }
 
     }
+
+
 }

@@ -53,16 +53,12 @@ public class PhotoSenderFragment extends Fragment {
     private final List<Bitmap> bitmapList = new ArrayList<>();
     private ImageView sendPhoto;
     private final ArrayList<File> listImages = new ArrayList<>();
-    private final Context context = getContext();
-    private FragmentManager fm;
     private HistoryDAO historyDAO;
-    private Fragment f = this;
+    private final Fragment f = this;
     private RelativeLayout previewPhoto;
 
     public interface OnSelectedButtonListener extends HistoryFragment.OnSelectedButtonListenerHistory{
-        /*void onSendPhoto();
-        void onCameraGoButton();
-        void onGalleryOpen();*/
+
         void goToHistory();
     }
 
@@ -72,9 +68,9 @@ public class PhotoSenderFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_photo_sender, container, false);
 
         listener = (OnSelectedButtonListener) getActivity();
-        if (listener != null) {
+        /*if (listener != null) {
             listener.onFragmentInteraction(getString(R.string.app_name), 1);
-        }
+        }*/
 
         Bundle args = getArguments();
         if (args != null){
