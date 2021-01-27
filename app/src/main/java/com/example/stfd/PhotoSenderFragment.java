@@ -56,9 +56,10 @@ public class PhotoSenderFragment extends Fragment {
     private HistoryDAO historyDAO;
     private final Fragment f = this;
     private RelativeLayout previewPhoto;
+    private EditText editNumDoc;
+    private EditText editNotice;
 
     public interface OnSelectedButtonListener extends HistoryFragment.OnSelectedButtonListenerHistory{
-
         void goToHistory();
     }
 
@@ -83,6 +84,7 @@ public class PhotoSenderFragment extends Fragment {
 
         sendPhoto = rootView.findViewById(R.id.sendToServer);
         previewPhoto = rootView.findViewById(R.id.preview_photo);
+
         AppDataBase db = SingletonAppDB.getInstance().getDatabase();
         historyDAO = db.historyEntity();
 
@@ -95,6 +97,9 @@ public class PhotoSenderFragment extends Fragment {
                 .setActivity(getActivity())
                 .setStorageType(PhotoEasy.StorageType.media)
                 .build();
+
+        editNumDoc = rootView.findViewById(R.id.edit_num_doc);
+        editNotice = rootView.findViewById(R.id.edit_notice);
 
         ImageView bigCrossView = rootView.findViewById(R.id.big_cross);
         bigCrossView.setOnClickListener(new View.OnClickListener() {
@@ -113,11 +118,10 @@ public class PhotoSenderFragment extends Fragment {
                 }
 
                 final RelativeLayout progressCircle = rootView.findViewById(R.id.progress_circular1);
-                final ImageView sendPhoto = rootView.findViewById(R.id.sendToServer);
+
 
                 progressCircle.setVisibility(View.VISIBLE);
-                final EditText editNumDoc = rootView.findViewById(R.id.edit_num_doc);
-                final EditText editNotice = rootView.findViewById(R.id.edit_notice);
+
                 final String numDoc = editNumDoc.getText().toString();
                 final String notice = editNotice.getText().toString();
 
@@ -139,12 +143,8 @@ public class PhotoSenderFragment extends Fragment {
                 client.post("https://172.16.0.227:600/api/upload_file",params,new TextHttpResponseHandler(){
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                        editNumDoc.getText().clear();
-                        editNotice.getText().clear();
-                        myAdapter.clear();
-                        listImages.clear();
                         Toast.makeText(getActivity(), "Информация успешено отправлена", Toast.LENGTH_LONG).show();
-                        sendPhoto.setVisibility(View.INVISIBLE);
+
                         progressCircle.setVisibility(View.INVISIBLE);
 
                         Log.e("ответ","все ок " + responseString);
@@ -248,6 +248,9 @@ public class PhotoSenderFragment extends Fragment {
             case R.id.history:
                 listener.goToHistory();
                 return true;
+            case R.id.clear:
+                clearAllFields();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -274,5 +277,13 @@ public class PhotoSenderFragment extends Fragment {
     public void onResume() {
         listener.onFragmentInteraction(getString(R.string.app_name), 1);
         super.onResume();
+    }
+
+    public void clearAllFields(){
+        editNumDoc.getText().clear();
+        editNotice.getText().clear();
+        myAdapter.clear();
+        listImages.clear();
+        sendPhoto.setVisibility(View.INVISIBLE);
     }
 }

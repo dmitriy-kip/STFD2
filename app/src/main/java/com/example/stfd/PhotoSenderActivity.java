@@ -96,6 +96,8 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
     }
 
 
+
+
     @Override
     public void onFragmentInteraction(String title, int index) {
         getSupportActionBar().setTitle(title);
@@ -104,6 +106,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 break;
             case 2:
+                getSupportActionBar().setHomeButtonEnabled(true);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 break;
         }

@@ -1,5 +1,6 @@
 package com.example.stfd;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,6 +35,7 @@ public class HistoryFragment extends Fragment {
     private HistoryAdapter historyAdapter;
     private final List<HistoryEntity> historyItemList = new ArrayList<>();
     private HistoryDAO historyDAO;
+    FragmentManager fm;
 
     public interface OnSelectedButtonListenerHistory{
         void onFragmentInteraction(String title, int index);
@@ -54,7 +57,7 @@ public class HistoryFragment extends Fragment {
             listener.onFragmentInteraction(getString(R.string.history), 2);
         }
 
-        FragmentManager fm = getActivity().getSupportFragmentManager();
+        fm = getActivity().getSupportFragmentManager();
 
         AppDataBase db = SingletonAppDB.getInstance().getDatabase();
         historyDAO = db.historyEntity();
@@ -72,6 +75,19 @@ public class HistoryFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.history_menu, menu);
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                fm.popBackStack();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
     @Override
