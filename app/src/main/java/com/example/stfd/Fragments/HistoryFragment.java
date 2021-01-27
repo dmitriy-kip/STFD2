@@ -1,4 +1,4 @@
-package com.example.stfd;
+package com.example.stfd.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -26,6 +26,7 @@ import com.example.stfd.DataBase.AppDataBase;
 import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryEntity;
 import com.example.stfd.DataBase.SingletonAppDB;
+import com.example.stfd.R;
 
 import java.util.ArrayList;
 import java.util.List;

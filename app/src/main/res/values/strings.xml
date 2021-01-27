@@ -8,4 +8,7 @@
     <string name="settings">Настройки</string>
     <string name="history">История</string>
     <string name="clean">Очистить</string>
+    <string name="dialog_history_save">Сохранить в историю?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>

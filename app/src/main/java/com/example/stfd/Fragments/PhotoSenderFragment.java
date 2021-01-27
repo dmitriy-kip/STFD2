@@ -1,4 +1,4 @@
-package com.example.stfd;
+package com.example.stfd.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,7 +26,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stfd.Adapters.HistoryAdapter;
 import com.example.stfd.Adapters.MyAdapter;
 import com.example.stfd.DataBase.AppDataBase;
 import com.example.stfd.DataBase.HistoryDAO;
@@ -34,6 +33,8 @@ import com.example.stfd.DataBase.HistoryEntity;
 import com.example.stfd.DataBase.SingletonAppDB;
 import com.example.stfd.MyPhotoEasy.OnPictureReady;
 import com.example.stfd.MyPhotoEasy.PhotoEasy;
+import com.example.stfd.R;
+import com.example.stfd.Utils;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -46,7 +47,7 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class PhotoSenderFragment extends Fragment {
+public class PhotoSenderFragment extends Fragment implements HistorySaveDialog.NoticeDialogListener{
     private OnSelectedButtonListener listener;
     private PhotoEasy photoEasy;
     private MyAdapter myAdapter;
@@ -58,6 +59,8 @@ public class PhotoSenderFragment extends Fragment {
     private RelativeLayout previewPhoto;
     private EditText editNumDoc;
     private EditText editNotice;
+    private String numDoc;
+    private String notice;
 
     public interface OnSelectedButtonListener extends HistoryFragment.OnSelectedButtonListenerHistory{
         void goToHistory();
@@ -122,8 +125,8 @@ public class PhotoSenderFragment extends Fragment {
 
                 progressCircle.setVisibility(View.VISIBLE);
 
-                final String numDoc = editNumDoc.getText().toString();
-                final String notice = editNotice.getText().toString();
+                numDoc = editNumDoc.getText().toString();
+                notice = editNotice.getText().toString();
 
                 for (int i = 0; i< bitmapList.size(); i++){
                     Utils.fillImageToList(bitmapList.get(i), listImages, getActivity());
@@ -144,17 +147,22 @@ public class PhotoSenderFragment extends Fragment {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
                         Toast.makeText(getActivity(), "Информация успешено отправлена", Toast.LENGTH_LONG).show();
-
                         progressCircle.setVisibility(View.INVISIBLE);
+
+                        HistorySaveDialog historySaveDialog = new HistorySaveDialog();
+                        historySaveDialog.show(getActivity().getSupportFragmentManager(), "dialog");
 
                         Log.e("ответ","все ок " + responseString);
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate()));
+
                         Toast.makeText(getActivity(), "Не удалось отправить", Toast.LENGTH_LONG).show();
                         progressCircle.setVisibility(View.INVISIBLE);
+
+                        HistorySaveDialog historySaveDialog = new HistorySaveDialog();
+                        historySaveDialog.show(getActivity().getSupportFragmentManager(), "dialog");
 
                         Log.e("ответ", "не ок " + responseString);
                     }
@@ -279,11 +287,16 @@ public class PhotoSenderFragment extends Fragment {
         super.onResume();
     }
 
-    public void clearAllFields(){
+    private void clearAllFields(){
         editNumDoc.getText().clear();
         editNotice.getText().clear();
         myAdapter.clear();
         listImages.clear();
         sendPhoto.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onDialogPositiveClick() {
+        historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate()));
     }
 }

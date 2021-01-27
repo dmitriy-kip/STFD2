@@ -16,16 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryEntity;
-import com.example.stfd.HistoryFragment;
-import com.example.stfd.HistoryItem;
-import com.example.stfd.PhotoSenderFragment;
+
+import com.example.stfd.Fragments.PhotoSenderFragment;
 import com.example.stfd.R;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 

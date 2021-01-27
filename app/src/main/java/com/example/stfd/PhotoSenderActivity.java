@@ -1,57 +1,30 @@
 package com.example.stfd;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import com.example.stfd.Adapters.HistoryAdapter;
 import com.example.stfd.Adapters.MyAdapter;
-import com.example.stfd.DataBase.AppDataBase;
-import com.example.stfd.DataBase.HistoryDAO;
-import com.example.stfd.DataBase.HistoryEntity;
-import com.example.stfd.DataBase.SingletonAppDB;
-import com.example.stfd.MyPhotoEasy.OnPictureReady;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
+import com.example.stfd.Fragments.HistoryFragment;
 //import com.thorny.photoeasy.OnPictureReady;
+import com.example.stfd.Fragments.PhotoSenderFragment;
 import com.example.stfd.MyPhotoEasy.PhotoEasy;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import cz.msebera.android.httpclient.Header;
+public class PhotoSenderActivity extends AppCompatActivity implements PhotoSenderFragment.OnSelectedButtonListener,
+        HistoryFragment.OnSelectedButtonListenerHistory{
 
-public class PhotoSenderActivity extends AppCompatActivity implements PhotoSenderFragment.OnSelectedButtonListener, HistoryFragment.OnSelectedButtonListenerHistory{
-
-    private PhotoEasy photoEasy;
-    private MyAdapter myAdapter;
-    private final List<Bitmap> bitmapList = new ArrayList<>();
-    private ImageView sendPhoto;
-    private final ArrayList<File> listImages = new ArrayList<>();
-    private final Context context = this;
     private FragmentManager fm;
     private PhotoSenderFragment photoSenderFragment;
 
