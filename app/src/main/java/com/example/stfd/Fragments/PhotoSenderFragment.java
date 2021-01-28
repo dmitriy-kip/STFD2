@@ -47,7 +47,7 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class PhotoSenderFragment extends Fragment implements HistorySaveDialog.NoticeDialogListener{
+public class PhotoSenderFragment extends Fragment {
     private OnSelectedButtonListener listener;
     private PhotoEasy photoEasy;
     private MyAdapter myAdapter;
@@ -295,8 +295,8 @@ public class PhotoSenderFragment extends Fragment implements HistorySaveDialog.N
         sendPhoto.setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    public void onDialogPositiveClick() {
+
+    public void saveData() {
         historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate()));
     }
 }

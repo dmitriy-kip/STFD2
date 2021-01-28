@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import com.example.stfd.Adapters.MyAdapter;
 import com.example.stfd.Fragments.HistoryFragment;
 //import com.thorny.photoeasy.OnPictureReady;
+import com.example.stfd.Fragments.HistorySaveDialog;
 import com.example.stfd.Fragments.PhotoSenderFragment;
 import com.example.stfd.MyPhotoEasy.PhotoEasy;
 
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class PhotoSenderActivity extends AppCompatActivity implements PhotoSenderFragment.OnSelectedButtonListener,
-        HistoryFragment.OnSelectedButtonListenerHistory{
+        HistoryFragment.OnSelectedButtonListenerHistory, HistorySaveDialog.NoticeDialogListener {
 
     private FragmentManager fm;
     private PhotoSenderFragment photoSenderFragment;
@@ -68,9 +69,6 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         return super.onKeyDown(keyCode, event);
     }
 
-
-
-
     @Override
     public void onFragmentInteraction(String title, int index) {
         getSupportActionBar().setTitle(title);
@@ -87,4 +85,8 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
     }
 
 
+    @Override
+    public void onDialogPositiveClick() {
+        photoSenderFragment.saveData();
+    }
 }
