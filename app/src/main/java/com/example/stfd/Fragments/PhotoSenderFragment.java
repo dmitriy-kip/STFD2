@@ -48,6 +48,7 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class PhotoSenderFragment extends Fragment {
+
     private OnSelectedButtonListener listener;
     private PhotoEasy photoEasy;
     private MyAdapter myAdapter;
@@ -61,6 +62,7 @@ public class PhotoSenderFragment extends Fragment {
     private EditText editNotice;
     private String numDoc;
     private String notice;
+    private int saveHistory = Utils.SAVE_HISTORY_ON_REQUEST;
 
     public interface OnSelectedButtonListener extends HistoryFragment.OnSelectedButtonListenerHistory{
         void goToHistory();
@@ -83,6 +85,8 @@ public class PhotoSenderFragment extends Fragment {
 
             EditText noticeEdit = rootView.findViewById(R.id.edit_notice);
             noticeEdit.setText(args.getString("notice"));
+
+            this.saveHistory = args.getInt("history");
         }
 
         sendPhoto = rootView.findViewById(R.id.sendToServer);
@@ -146,25 +150,43 @@ public class PhotoSenderFragment extends Fragment {
                 client.post("https://172.16.0.227:600/api/upload_file",params,new TextHttpResponseHandler(){
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                        Toast.makeText(getActivity(), "Информация успешено отправлена", Toast.LENGTH_LONG).show();
                         progressCircle.setVisibility(View.INVISIBLE);
 
-                        HistorySaveDialog historySaveDialog = new HistorySaveDialog();
-                        historySaveDialog.show(getActivity().getSupportFragmentManager(), "dialog");
+                        switch (saveHistory){
+                            case Utils.SAVE_HISTORY_ALWAYS:
+                                saveData();
+                                Toast.makeText(getActivity(), "Информация успешно отправлена", Toast.LENGTH_LONG).show();
+                                break;
+                            case Utils.SAVE_HISTORY_ON_REQUEST:
+                                executeDialog(Utils.RESPONSE_IS_OK);
+                                break;
+                            case Utils.SAVE_HISTORY_WHEN_FAILURE:
+                            case Utils.SAVE_HISTORY_NEVER:
+                                Toast.makeText(getActivity(), "Информация успешно отправлена", Toast.LENGTH_LONG).show();
+                                break;
+                            default:
 
-                        Log.e("ответ","все ок " + responseString);
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
-                        Toast.makeText(getActivity(), "Не удалось отправить", Toast.LENGTH_LONG).show();
                         progressCircle.setVisibility(View.INVISIBLE);
 
-                        HistorySaveDialog historySaveDialog = new HistorySaveDialog();
-                        historySaveDialog.show(getActivity().getSupportFragmentManager(), "dialog");
-
-                        Log.e("ответ", "не ок " + responseString);
+                        switch (saveHistory) {
+                            case Utils.SAVE_HISTORY_ALWAYS:
+                            case Utils.SAVE_HISTORY_WHEN_FAILURE:
+                                Toast.makeText(getActivity(), "Не удалось отправить", Toast.LENGTH_LONG).show();
+                                saveData();
+                                break;
+                            case Utils.SAVE_HISTORY_ON_REQUEST:
+                                executeDialog(Utils.RESPONSE_IS_FAILURE);
+                                break;
+                            case Utils.SAVE_HISTORY_NEVER:
+                                Toast.makeText(getActivity(), "Не удалось отправить", Toast.LENGTH_LONG).show();
+                                break;
+                            default:
+                        }
                     }
 
                 });
@@ -185,18 +207,17 @@ public class PhotoSenderFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
-                startActivityForResult(intent, 2);
+                startActivityForResult(intent, Utils.OPEN_GALLERY);
             }
         });
 
         return rootView;
     }
 
-    public boolean onKeyDown(){
+    public void onKeyDown(){
         if (previewPhoto.getVisibility() == View.VISIBLE)
             previewPhoto.setVisibility(View.INVISIBLE);
-        myAdapter.notifyDataSetChanged();
-        return true;
+
     }
 
     @Override
@@ -210,7 +231,7 @@ public class PhotoSenderFragment extends Fragment {
         });
 
         if (resultCode == Activity.RESULT_OK) {
-            if(requestCode == 2) {
+            if(requestCode == Utils.OPEN_GALLERY) {
                 Uri imageUri = data.getData();
                 Bitmap bitmap = null;
                 try {
@@ -298,5 +319,15 @@ public class PhotoSenderFragment extends Fragment {
 
     public void saveData() {
         historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate()));
+    }
+
+    private void executeDialog(int response){
+        HistorySaveDialog historySaveDialog = new HistorySaveDialog();
+
+        Bundle args = new Bundle();
+        args.putInt("response", response);
+        historySaveDialog.setArguments(args);
+
+        historySaveDialog.show(getActivity().getSupportFragmentManager(), "dialog");
     }
 }

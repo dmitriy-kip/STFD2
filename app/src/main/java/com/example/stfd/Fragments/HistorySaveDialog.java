@@ -5,28 +5,48 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.stfd.R;
+import com.example.stfd.Utils;
 
 import java.util.Objects;
 
 public class HistorySaveDialog extends DialogFragment {
 
     public interface NoticeDialogListener {
-        public void onDialogPositiveClick();
+        void onDialogPositiveClick();
     }
 
-    NoticeDialogListener listener;
+    private NoticeDialogListener listener;
+    private int response;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        Bundle arg = getArguments();
+        if (arg != null){
+            this.response = arg.getInt("response");
+        }
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-        dialog.setMessage(R.string.dialog_history_save)
+        String message = "";
+        switch (response){
+            case Utils.RESPONSE_IS_OK:
+                message = "Информация успешно отправлена";
+                break;
+            case Utils.RESPONSE_IS_FAILURE:
+                message = "Не удалось отправить";
+                break;
+            default:
+        }
+        dialog.setTitle(message)
+                .setMessage(R.string.dialog_history_save)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

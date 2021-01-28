@@ -16,6 +16,13 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Utils {
+    public static final int RESPONSE_IS_OK = 1;
+    public static final int RESPONSE_IS_FAILURE = 2;
+    public static final int OPEN_GALLERY = 2;
+    public static final int SAVE_HISTORY_ALWAYS = 1;
+    public static final int SAVE_HISTORY_ON_REQUEST = 2;
+    public static final int SAVE_HISTORY_WHEN_FAILURE = 3;
+    public static final int SAVE_HISTORY_NEVER = 4;
 
     public static boolean isOnline(Context context)
     {

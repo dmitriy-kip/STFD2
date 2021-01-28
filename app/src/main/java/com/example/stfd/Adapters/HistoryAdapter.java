@@ -19,6 +19,7 @@ import com.example.stfd.DataBase.HistoryEntity;
 
 import com.example.stfd.Fragments.PhotoSenderFragment;
 import com.example.stfd.R;
+import com.example.stfd.Utils;
 
 import java.util.List;
 
@@ -73,6 +74,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 Bundle args = new Bundle();
                 args.putString("numDoc", historyItem.docNum);
                 args.putString("notice", historyItem.notice);
+                args.putInt("history", Utils.SAVE_HISTORY_NEVER);
                 photoSenderFragment.setArguments(args);
 
                 ft.replace(R.id.container, photoSenderFragment, "historyFragment");

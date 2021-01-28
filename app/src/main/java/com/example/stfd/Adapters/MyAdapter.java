@@ -48,6 +48,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyAdapter.ViewHolder holder, final int position) {
+        if (smallImages.size() != 0){
+            sendButton.setVisibility(View.VISIBLE);
+        }
         Bitmap bitmap = smallImages.get(position);
         holder.imageBitmapView.setImageBitmap(bitmap);
         holder.imageBitmapView.setOnClickListener(new View.OnClickListener() {

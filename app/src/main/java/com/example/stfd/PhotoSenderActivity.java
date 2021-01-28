@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.example.stfd.Adapters.MyAdapter;
@@ -62,8 +63,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
 
                 }
             }
-            photoSenderFragment.onKeyDown();
-            //invalidateOptionsMenu();
+            photoSenderFragment.onKeyDown(); //вызываем из фрагмента потому что иначе ловит нул эксепшн
             return true;
         }
         return super.onKeyDown(keyCode, event);
