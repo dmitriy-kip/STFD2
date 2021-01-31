@@ -1,11 +1,16 @@
 package com.example.stfd.Fragments;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,9 +45,12 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -55,6 +63,7 @@ public class PhotoSenderFragment extends Fragment {
     private final List<Bitmap> bitmapList = new ArrayList<>();
     private ImageView sendPhoto;
     private final ArrayList<File> listImages = new ArrayList<>();
+    private List<String> photosUri = new ArrayList<>();
     private HistoryDAO historyDAO;
     private final Fragment f = this;
     private RelativeLayout previewPhoto;
@@ -63,9 +72,12 @@ public class PhotoSenderFragment extends Fragment {
     private String numDoc;
     private String notice;
     private int saveHistory = Utils.SAVE_HISTORY_ON_REQUEST;
+    private SharedPreferences mSettings;
+    boolean fromHistory = false;
 
     public interface OnSelectedButtonListener extends HistoryFragment.OnSelectedButtonListenerHistory{
         void goToHistory();
+        void goToSettings();
     }
 
     @Nullable
@@ -78,6 +90,8 @@ public class PhotoSenderFragment extends Fragment {
             listener.onFragmentInteraction(getString(R.string.app_name), 1);
         }*/
 
+        mSettings = getActivity().getSharedPreferences("mysettings", Context.MODE_PRIVATE);
+
         Bundle args = getArguments();
         if (args != null){
             EditText docNumEdit = rootView.findViewById(R.id.edit_num_doc);
@@ -86,7 +100,22 @@ public class PhotoSenderFragment extends Fragment {
             EditText noticeEdit = rootView.findViewById(R.id.edit_notice);
             noticeEdit.setText(args.getString("notice"));
 
-            this.saveHistory = args.getInt("history");
+            fromHistory = args.getBoolean("history");
+
+            String[] photosArray = args.getStringArray("photosUri");
+            photosUri.addAll(Arrays.asList(photosArray));
+
+            for (String photo : photosUri) {
+                Bitmap bitmap = null;
+                Uri imageUri = Uri.parse(photo);
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "Некоторые фотографии были удалены или перемещены", Toast.LENGTH_LONG).show();
+                }
+                bitmapList.add(bitmap);
+            }
         }
 
         sendPhoto = rootView.findViewById(R.id.sendToServer);
@@ -96,7 +125,7 @@ public class PhotoSenderFragment extends Fragment {
         historyDAO = db.historyEntity();
 
         final RecyclerView recyclerView = rootView.findViewById(R.id.recycle_list);
-        myAdapter = new MyAdapter(getContext(), bitmapList, sendPhoto, previewPhoto);
+        myAdapter = new MyAdapter(getContext(), bitmapList, sendPhoto, previewPhoto, photosUri);
         recyclerView.setAdapter(myAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -125,15 +154,20 @@ public class PhotoSenderFragment extends Fragment {
                 }
 
                 final RelativeLayout progressCircle = rootView.findViewById(R.id.progress_circular1);
-
-
                 progressCircle.setVisibility(View.VISIBLE);
+
+                //получем настройки сохранения истории
+                if (!fromHistory) {
+                    saveHistory = mSettings.getInt("save", Utils.SAVE_HISTORY_ON_REQUEST);
+                } else {
+                    saveHistory = Utils.SAVE_HISTORY_NEVER;
+                }
 
                 numDoc = editNumDoc.getText().toString();
                 notice = editNotice.getText().toString();
 
                 for (int i = 0; i< bitmapList.size(); i++){
-                    Utils.fillImageToList(bitmapList.get(i), listImages, getActivity());
+                    Utils.fillImageToList(bitmapList.get(i), listImages, photosUri.get(i));
                 }
                 File[] files = new File[listImages.size()];
                 listImages.toArray(files);
@@ -205,8 +239,16 @@ public class PhotoSenderFragment extends Fragment {
         galleryOpen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setType("image/*");
+                /*intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);*/
+                /*takeFlags = intent.getFlags()
+                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);*/
+
+
                 startActivityForResult(intent, Utils.OPEN_GALLERY);
             }
         });
@@ -215,9 +257,7 @@ public class PhotoSenderFragment extends Fragment {
     }
 
     public void onKeyDown(){
-        if (previewPhoto.getVisibility() == View.VISIBLE)
-            previewPhoto.setVisibility(View.INVISIBLE);
-
+        previewPhoto.setVisibility(View.INVISIBLE); //не работает хз почему
     }
 
     @Override
@@ -226,15 +266,22 @@ public class PhotoSenderFragment extends Fragment {
         photoEasy.onActivityResult(requestCode, resultCode, new OnPictureReady() {
             @Override
             public void onFinish(Bitmap thumbnail, Uri uri) {
-                addPhoto(thumbnail);
+                addPhoto(thumbnail, uri);
+
             }
         });
 
         if (resultCode == Activity.RESULT_OK) {
             if(requestCode == Utils.OPEN_GALLERY) {
                 Uri imageUri = data.getData();
+                if (imageUri == null) return; // TODO: Show error
+                final int takeFlags = data.getFlags()
+                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                getActivity().getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
                 Bitmap bitmap = null;
                 try {
+
                     bitmap = MediaStore.Images.Media.getBitmap( getActivity().getContentResolver(), imageUri);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -243,14 +290,16 @@ public class PhotoSenderFragment extends Fragment {
                     Toast.makeText(getActivity(), "Не удалось получить фаил", Toast.LENGTH_LONG).show();
                     return;
                 }
-                addPhoto(bitmap);
+                addPhoto(bitmap, imageUri);
             }
+
         }
 
     }
 
-    private void addPhoto(Bitmap bitmap){
+    private void addPhoto(Bitmap bitmap, Uri uri){
         bitmapList.add(bitmap);
+        photosUri.add(uri.toString());
         myAdapter.notifyItemInserted(bitmapList.size()-1);
         sendPhoto.setVisibility(View.VISIBLE);
     }
@@ -272,7 +321,7 @@ public class PhotoSenderFragment extends Fragment {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.settings:
-                /*Toast.makeText(this, "Работает", Toast.LENGTH_LONG).show();*/
+                listener.goToSettings();
                 return true;
             case R.id.history:
                 listener.goToHistory();
@@ -313,12 +362,16 @@ public class PhotoSenderFragment extends Fragment {
         editNotice.getText().clear();
         myAdapter.clear();
         listImages.clear();
+        bitmapList.clear();
+        photosUri.clear();
+        fromHistory = false;
         sendPhoto.setVisibility(View.INVISIBLE);
     }
 
 
     public void saveData() {
-        historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate()));
+
+        historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate(), photosUri));
     }
 
     private void executeDialog(int response){

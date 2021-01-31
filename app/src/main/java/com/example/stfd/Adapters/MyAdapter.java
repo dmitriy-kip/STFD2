@@ -2,6 +2,7 @@ package com.example.stfd.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +23,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private List<Bitmap> smallImages;
     private ImageView sendButton;
     private RelativeLayout r;
+    private List<String> uris;
 
-    public MyAdapter(Context context, List<Bitmap> list, ImageView button, RelativeLayout relativeLayout){
+    public MyAdapter(Context context, List<Bitmap> list, ImageView button, RelativeLayout relativeLayout, List<String> photosUri){
         this.smallImages = list;
         this.inflater = LayoutInflater.from(context);
         this.sendButton = button;
         this.r = relativeLayout;
+        this.uris = photosUri;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -51,14 +54,22 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         if (smallImages.size() != 0){
             sendButton.setVisibility(View.VISIBLE);
         }
-        Bitmap bitmap = smallImages.get(position);
-        holder.imageBitmapView.setImageBitmap(bitmap);
+        final Bitmap bitmap = smallImages.get(position);
+
+        //проверяем потому что из истории могла прийти фотка которой уже нет
+        if (bitmap == null){
+            holder.imageBitmapView.setImageResource(R.drawable.notfound2);
+        } else {
+            holder.imageBitmapView.setImageBitmap(bitmap);
+        }
+
         holder.imageBitmapView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 r.setVisibility(View.VISIBLE);
                 ImageView i = (ImageView) r.getChildAt(0);
-                i.setImageBitmap(smallImages.get(position));
+                if (bitmap == null) i.setImageResource(R.drawable.notfound2);
+                else i.setImageBitmap(bitmap);
             }
         });
 
@@ -66,6 +77,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             @Override
             public void onClick(View view) {
                 smallImages.remove(position);
+                uris.remove(position);
                 notifyDataSetChanged();
 
                 if (smallImages.size() == 0){

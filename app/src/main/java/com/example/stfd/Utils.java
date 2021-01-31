@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,10 +59,9 @@ public class Utils {
         return bitmapdata;
     }
 
-    public static void fillImageToList(Bitmap bitmap, ArrayList<File> listImages, Context context1) {
-        File f = new File(context1.getCacheDir(), createFileName());
+    public static void fillImageToList(Bitmap bitmap, ArrayList<File> listImages, String photoUri) {
+        File f = new File(photoUri); //тут еще подумать надо
         try {
-            f.createNewFile();
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
             byte[] bitmapdata = bos.toByteArray();
@@ -80,7 +80,7 @@ public class Utils {
     }
 
     public static String currentDate(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         Date date = new Date();
         return dateFormat.format(date);
     }

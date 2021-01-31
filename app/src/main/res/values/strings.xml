@@ -11,4 +11,8 @@
     <string name="dialog_history_save">Сохранить в историю?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="save_always">Всегда сохранять</string>
+    <string name="save_on_request">Спрашивать перед сохранением</string>
+    <string name="save_when_failure">Сохранять только не отправленные</string>
+    <string name="save_naver">Ничего не сохранять</string>
 </resources>

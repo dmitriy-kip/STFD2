@@ -1,8 +1,15 @@
 package com.example.stfd.DataBase;
 
+import android.graphics.Bitmap;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class HistoryEntity {
@@ -18,12 +25,14 @@ public class HistoryEntity {
     @ColumnInfo(name = "time")
     public String time;
 
+    @TypeConverters({PhotosUriConverter.class})
+    public List<String> photos;
 
-
-    public HistoryEntity(String docNum, String notice, String time) {
+    public HistoryEntity(String docNum, String notice, String time, List<String> photos) {
         this.docNum = docNum;
         this.notice = notice;
         this.time = time;
+        this.photos = photos;
     }
 
     public int getHid() {

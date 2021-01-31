@@ -21,6 +21,7 @@ import com.example.stfd.Fragments.PhotoSenderFragment;
 import com.example.stfd.R;
 import com.example.stfd.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
@@ -74,7 +75,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 Bundle args = new Bundle();
                 args.putString("numDoc", historyItem.docNum);
                 args.putString("notice", historyItem.notice);
-                args.putInt("history", Utils.SAVE_HISTORY_NEVER);
+                args.putBoolean("history", true);
+                String[] ar = (String[]) historyItem.photos.toArray();
+                args.putStringArray("photosUri", ar);
                 photoSenderFragment.setArguments(args);
 
                 ft.replace(R.id.container, photoSenderFragment, "historyFragment");

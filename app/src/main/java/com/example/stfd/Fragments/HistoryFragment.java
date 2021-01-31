@@ -36,7 +36,7 @@ public class HistoryFragment extends Fragment {
     private HistoryAdapter historyAdapter;
     private final List<HistoryEntity> historyItemList = new ArrayList<>();
     private HistoryDAO historyDAO;
-    FragmentManager fm;
+    private FragmentManager fm;
 
     public interface OnSelectedButtonListenerHistory{
         void onFragmentInteraction(String title, int index);

@@ -1,6 +1,7 @@
 package com.example.stfd;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -17,6 +18,7 @@ import com.example.stfd.Fragments.HistoryFragment;
 //import com.thorny.photoeasy.OnPictureReady;
 import com.example.stfd.Fragments.HistorySaveDialog;
 import com.example.stfd.Fragments.PhotoSenderFragment;
+import com.example.stfd.Fragments.SettingsFragment;
 import com.example.stfd.MyPhotoEasy.PhotoEasy;
 
 import java.io.File;
@@ -48,6 +50,17 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         FragmentTransaction ft = fm.beginTransaction();
         HistoryFragment historyFragment = new HistoryFragment();
         ft.replace(R.id.container, historyFragment, "historyFragment");
+        ft.addToBackStack(null);
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        ft.commit();
+    }
+
+    @Override
+    public void goToSettings() {
+        fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        SettingsFragment settingsFragment = new SettingsFragment();
+        ft.replace(R.id.container, settingsFragment, "settingsFragment");
         ft.addToBackStack(null);
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         ft.commit();

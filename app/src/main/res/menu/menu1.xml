@@ -4,7 +4,7 @@
     <item android:id="@+id/settings"
         android:icon="@drawable/cross"
         android:title="@string/settings"
-         />
+        />
     <item android:id="@+id/history"
         android:icon="@drawable/cross1"
         android:title="@string/history"
