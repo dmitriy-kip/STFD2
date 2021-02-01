@@ -59,9 +59,11 @@ public class Utils {
         return bitmapdata;
     }
 
-    public static void fillImageToList(Bitmap bitmap, ArrayList<File> listImages, String photoUri) {
-        File f = new File(photoUri); //тут еще подумать надо
+    public static void fillImageToList(Bitmap bitmap, ArrayList<File> listImages, Context context1) {
+
         try {
+            File f = new File(context1.getCacheDir(), createFileName());
+            f.createNewFile();
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
             byte[] bitmapdata = bos.toByteArray();
@@ -73,10 +75,11 @@ public class Utils {
             fos.write(bitmapdata);
             fos.flush();
             fos.close();
+            listImages.add(f);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        listImages.add(f);
+
     }
 
     public static String currentDate(){

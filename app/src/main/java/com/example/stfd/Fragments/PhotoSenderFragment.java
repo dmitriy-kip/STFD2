@@ -82,7 +82,7 @@ public class PhotoSenderFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_photo_sender, container, false);
 
         listener = (OnSelectedButtonListener) getActivity();
@@ -94,28 +94,38 @@ public class PhotoSenderFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null){
-            EditText docNumEdit = rootView.findViewById(R.id.edit_num_doc);
-            docNumEdit.setText(args.getString("numDoc"));
+            if (args.getString("numDoc") != null) {
+                EditText docNumEdit = rootView.findViewById(R.id.edit_num_doc);
+                docNumEdit.setText(args.getString("numDoc"));
+            }
 
-            EditText noticeEdit = rootView.findViewById(R.id.edit_notice);
-            noticeEdit.setText(args.getString("notice"));
+            if (args.getString("notice") != null) {
+                EditText noticeEdit = rootView.findViewById(R.id.edit_notice);
+                noticeEdit.setText(args.getString("notice"));
+            }
 
             fromHistory = args.getBoolean("history");
 
+            if (args.getStringArray("photosUri") != null) {
             String[] photosArray = args.getStringArray("photosUri");
-            photosUri.addAll(Arrays.asList(photosArray));
+                photosUri.addAll(Arrays.asList(photosArray));
 
-            for (String photo : photosUri) {
-                Bitmap bitmap = null;
-                Uri imageUri = Uri.parse(photo);
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getActivity(), "Некоторые фотографии были удалены или перемещены", Toast.LENGTH_LONG).show();
+                for (String photo : photosUri) {
+                    Bitmap bitmap = null;
+                    Uri imageUri = Uri.parse(photo);
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "Некоторые фотографии были удалены или перемещены", Toast.LENGTH_LONG).show();
+                    }
+                    bitmapList.add(bitmap);
                 }
-                bitmapList.add(bitmap);
             }
+
+            args.remove("numDoc");
+            args.remove("notice");
+            args.remove("photosUri");
         }
 
         sendPhoto = rootView.findViewById(R.id.sendToServer);
@@ -167,7 +177,7 @@ public class PhotoSenderFragment extends Fragment {
                 notice = editNotice.getText().toString();
 
                 for (int i = 0; i< bitmapList.size(); i++){
-                    Utils.fillImageToList(bitmapList.get(i), listImages, photosUri.get(i));
+                    Utils.fillImageToList(bitmapList.get(i), listImages, getActivity());
                 }
                 File[] files = new File[listImages.size()];
                 listImages.toArray(files);
