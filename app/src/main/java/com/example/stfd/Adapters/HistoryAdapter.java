@@ -26,9 +26,14 @@ import java.util.List;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
+    public interface OnSelectedButtonItem{
+        void onSelectItemHistory(String docNum, String notice, List<String> uris);
+    }
+
     private List<HistoryEntity> historyItemList;
     HistoryDAO historyDAO;
     FragmentManager fm;
+    Context context;
     //private LayoutInflater inflater;
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -50,6 +55,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         this.historyItemList = historyItemList;
         this.historyDAO = historyDAO;
         this.fm = fm;
+        this.context = context;
         //this.inflater = LayoutInflater.from(context);
     }
 
@@ -69,21 +75,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.historyContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction ft = fm.beginTransaction();
-                PhotoSenderFragment photoSenderFragment = new PhotoSenderFragment();
-
-                Bundle args = new Bundle();
-                args.putString("numDoc", historyItem.docNum);
-                args.putString("notice", historyItem.notice);
-                args.putBoolean("history", true);
-                String[] ar = (String[]) historyItem.photos.toArray();
-                args.putStringArray("photosUri", ar);
-                photoSenderFragment.setArguments(args);
-
-                ft.replace(R.id.container, photoSenderFragment, "historyFragment");
-                //ft.addToBackStack(null);
-                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                ft.commit();
+                OnSelectedButtonItem buttonItem = (OnSelectedButtonItem) context;
+                buttonItem.onSelectItemHistory(historyItem.docNum, historyItem.notice, historyItem.photos);
             }
         });
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {

@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.example.stfd.Adapters.HistoryAdapter;
 import com.example.stfd.Adapters.MyAdapter;
 import com.example.stfd.Fragments.HistoryFragment;
 //import com.thorny.photoeasy.OnPictureReady;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class PhotoSenderActivity extends AppCompatActivity implements PhotoSenderFragment.OnSelectedButtonListener,
-        HistoryFragment.OnSelectedButtonListenerHistory, HistorySaveDialog.NoticeDialogListener {
+        HistoryFragment.OnSelectedButtonListenerHistory, HistorySaveDialog.NoticeDialogListener, HistoryAdapter.OnSelectedButtonItem {
 
     private FragmentManager fm;
     private PhotoSenderFragment photoSenderFragment;
@@ -101,5 +102,25 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
     @Override
     public void onDialogPositiveClick() {
         photoSenderFragment.saveData();
+
+    }
+
+    @Override
+    public void onSelectItemHistory(String docNum, String notice, List<String> uris) {
+        FragmentTransaction ft = fm.beginTransaction();
+        photoSenderFragment = new PhotoSenderFragment();
+
+        Bundle args = new Bundle();
+        args.putString("numDoc", docNum);
+        args.putString("notice", notice);
+        args.putBoolean("history", true);
+        String[] ar = (String[]) uris.toArray();
+        args.putStringArray("photosUri", ar);
+        photoSenderFragment.setArguments(args);
+
+        ft.replace(R.id.container, photoSenderFragment, "historyFragment");
+        //ft.addToBackStack(null);
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        ft.commit();
     }
 }

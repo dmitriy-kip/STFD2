@@ -94,15 +94,15 @@ public class PhotoSenderFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null){
-            if (args.getString("numDoc") != null) {
+            //if (args.getString("numDoc") != null) {
                 EditText docNumEdit = rootView.findViewById(R.id.edit_num_doc);
                 docNumEdit.setText(args.getString("numDoc"));
-            }
+            //}
 
-            if (args.getString("notice") != null) {
+            //if (args.getString("notice") != null) {
                 EditText noticeEdit = rootView.findViewById(R.id.edit_notice);
                 noticeEdit.setText(args.getString("notice"));
-            }
+            //}
 
             fromHistory = args.getBoolean("history");
 
@@ -123,9 +123,7 @@ public class PhotoSenderFragment extends Fragment {
                 }
             }
 
-            args.remove("numDoc");
-            args.remove("notice");
-            args.remove("photosUri");
+            args.clear();
         }
 
         sendPhoto = rootView.findViewById(R.id.sendToServer);
@@ -211,6 +209,7 @@ public class PhotoSenderFragment extends Fragment {
                             default:
 
                         }
+                        Log.e("ответ","все ок " + responseString);
                     }
 
                     @Override
@@ -231,6 +230,7 @@ public class PhotoSenderFragment extends Fragment {
                                 break;
                             default:
                         }
+                        Log.e("ответ", "не ок " + responseString);
                     }
 
                 });
@@ -387,9 +387,9 @@ public class PhotoSenderFragment extends Fragment {
     private void executeDialog(int response){
         HistorySaveDialog historySaveDialog = new HistorySaveDialog();
 
-        Bundle args = new Bundle();
-        args.putInt("response", response);
-        historySaveDialog.setArguments(args);
+        Bundle args1 = new Bundle();
+        args1.putInt("response", response);
+        historySaveDialog.setArguments(args1);
 
         historySaveDialog.show(getActivity().getSupportFragmentManager(), "dialog");
     }
