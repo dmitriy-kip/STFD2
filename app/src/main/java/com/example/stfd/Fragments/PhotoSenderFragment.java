@@ -189,7 +189,7 @@ public class PhotoSenderFragment extends Fragment {
                 }
                 params.put("income_num", numDoc);
                 params.put("file_desc", notice);
-                client.post("https://172.16.0.227:600/api/upload_file",params,new TextHttpResponseHandler(){
+                client.post("http://prog-matik.ru:8086/api/upload_file",params,new TextHttpResponseHandler(){
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
                         progressCircle.setVisibility(View.INVISIBLE);
