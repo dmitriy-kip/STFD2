@@ -86,9 +86,9 @@ public class PhotoSenderFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_photo_sender, container, false);
 
         listener = (OnSelectedButtonListener) getActivity();
-        /*if (listener != null) {
+        if (listener != null) {
             listener.onFragmentInteraction(getString(R.string.app_name), 1);
-        }*/
+        }
 
         mSettings = getActivity().getSharedPreferences("mysettings", Context.MODE_PRIVATE);
 

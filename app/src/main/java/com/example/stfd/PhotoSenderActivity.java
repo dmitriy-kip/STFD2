@@ -15,6 +15,7 @@ import android.widget.ImageView;
 
 import com.example.stfd.Adapters.HistoryAdapter;
 import com.example.stfd.Adapters.MyAdapter;
+import com.example.stfd.Fragments.FirstScreenFragment;
 import com.example.stfd.Fragments.HistoryFragment;
 //import com.thorny.photoeasy.OnPictureReady;
 import com.example.stfd.Fragments.HistorySaveDialog;
@@ -28,7 +29,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class PhotoSenderActivity extends AppCompatActivity implements PhotoSenderFragment.OnSelectedButtonListener,
-        HistoryFragment.OnSelectedButtonListenerHistory, HistorySaveDialog.NoticeDialogListener, HistoryAdapter.OnSelectedButtonItem {
+        HistoryFragment.OnSelectedButtonListenerHistory, HistorySaveDialog.NoticeDialogListener, HistoryAdapter.OnSelectedButtonItem,
+        FirstScreenFragment.OnSelectedFirstScreenListener {
 
     private FragmentManager fm;
     private PhotoSenderFragment photoSenderFragment;
@@ -38,11 +40,22 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_sender);
 
-        FragmentManager fm = getSupportFragmentManager();
-        photoSenderFragment = new PhotoSenderFragment();;
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.container, photoSenderFragment, "photoSenderFragment");
-        ft.commit();
+        SharedPreferences mSettings = getSharedPreferences("mysettings", Context.MODE_PRIVATE);
+        String phoneNumber = "+7" + mSettings.getString("phone", "");
+
+        fm = getSupportFragmentManager();
+        if (!phoneNumber.equals("+7")) {
+            photoSenderFragment = new PhotoSenderFragment();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.container, photoSenderFragment, "photoSenderFragment");
+            ft.commit();
+        } else {
+            FirstScreenFragment firstScreenFragment = new FirstScreenFragment();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.container, firstScreenFragment, "firstScreenFragment");
+            ft.commit();
+        }
+
     }
 
     @Override
@@ -65,6 +78,30 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
         ft.addToBackStack(null);
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         ft.commit();
+    }
+
+    @Override
+    public void onSelectItemHistory(String docNum, String notice, List<String> uris) {
+        FragmentTransaction ft = fm.beginTransaction();
+        photoSenderFragment = new PhotoSenderFragment();
+
+        Bundle args = new Bundle();
+        args.putString("numDoc", docNum);
+        args.putString("notice", notice);
+        args.putBoolean("history", true);
+        String[] ar = (String[]) uris.toArray();
+        args.putStringArray("photosUri", ar);
+        photoSenderFragment.setArguments(args);
+
+        ft.replace(R.id.container, photoSenderFragment, "historyFragment");
+        //ft.addToBackStack(null);
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        ft.commit();
+    }
+
+    @Override
+    public void goToSender(List<String> modules) {
+
     }
 
     @Override
@@ -98,29 +135,9 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
 
     }
 
-
     @Override
     public void onDialogPositiveClick() {
         photoSenderFragment.saveData();
 
-    }
-
-    @Override
-    public void onSelectItemHistory(String docNum, String notice, List<String> uris) {
-        FragmentTransaction ft = fm.beginTransaction();
-        photoSenderFragment = new PhotoSenderFragment();
-
-        Bundle args = new Bundle();
-        args.putString("numDoc", docNum);
-        args.putString("notice", notice);
-        args.putBoolean("history", true);
-        String[] ar = (String[]) uris.toArray();
-        args.putStringArray("photosUri", ar);
-        photoSenderFragment.setArguments(args);
-
-        ft.replace(R.id.container, photoSenderFragment, "historyFragment");
-        //ft.addToBackStack(null);
-        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        ft.commit();
     }
 }
