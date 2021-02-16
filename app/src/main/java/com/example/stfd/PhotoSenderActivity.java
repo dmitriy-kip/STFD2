@@ -9,9 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.stfd.Adapters.HistoryAdapter;
 import com.example.stfd.Adapters.MyAdapter;
@@ -100,8 +102,9 @@ public class PhotoSenderActivity extends AppCompatActivity implements PhotoSende
     }
 
     @Override
-    public void goToSender(List<String> modules) {
-
+    public void goToSender(List<String> modules, String authId) {
+        Toast.makeText(this, "Посмотри лог", Toast.LENGTH_LONG).show();
+        Log.e("норм  ", modules.toString() + "\n" + authId);
     }
 
     @Override

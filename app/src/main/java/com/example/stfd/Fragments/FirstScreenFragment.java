@@ -1,6 +1,7 @@
 package com.example.stfd.Fragments;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.example.stfd.R;
 import com.example.stfd.Utils;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -32,11 +34,13 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class FirstScreenFragment extends Fragment {
-    OnSelectedFirstScreenListener listener;
-    List<String> modules = new ArrayList<>();
+    private static final String BASE_URI = "http://172.16.0.227:8086/api/auth";
+    private OnSelectedFirstScreenListener listener;
+    private List<String> modules = new ArrayList<>();
+
 
     public interface OnSelectedFirstScreenListener extends HistoryFragment.OnSelectedButtonListenerHistory{
-        void goToSender(List<String> modules);
+        void goToSender(List<String> modules, String authId);
     }
 
     @Nullable
@@ -54,40 +58,38 @@ public class FirstScreenFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 EditText phoneEdit = rootView.findViewById(R.id.phone_number);
-                String phone = "+7" + phoneEdit.getText().toString();
+                String phone = phoneEdit.getText().toString();
 
                 AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
-                RequestParams params = new RequestParams();
-                params.put("phoneNumber", phone);
-                client.post("http://prog-matik.ru:8086/api/auth?phone=9139000000",params,new TextHttpResponseHandler(){
+                client.get(getFinalUri(phone), new JsonHttpResponseHandler(){
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                         try {
-                            JSONArray arr = new JSONArray(responseString);
-                            JSONObject obj = arr.getJSONObject(0);
+                            JSONObject obj = response.getJSONObject(0);
                             JSONArray arr2 = obj.getJSONArray("records");
                             JSONObject obj2 = arr2.getJSONObject(0);
-                            JSONArray projects = obj2.getJSONArray("projects");
+                            String authId = obj2.getString("auth_id");
+                            JSONArray projects = obj2.getJSONArray("modules");
                             if (projects.length() != 0) {
                                 for (int i = 0; i < projects.length(); i++) {
                                     JSONObject module = projects.getJSONObject(i);
                                     modules.add(module.getString("name"));
                                 }
-                                listener.goToSender(modules);
+                                listener.goToSender(modules, authId);
                             } else {
-                                Toast.makeText(getActivity(), "Вы не зарегестрированны. Обратитесь к админестратору", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), "Вы не зарегестрированны. Обратитесь к администратору", Toast.LENGTH_LONG).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Log.e("ответ","все ок " + responseString);
-                    }
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        Toast.makeText(getActivity(), "Не удалось подключится к серверу",Toast.LENGTH_LONG).show();
-                        Log.e("ответ", "не ок " + responseString);
+                        Log.e("ответ","все ок " + response.toString());
                     }
 
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                        Toast.makeText(getActivity(), "Не удалось подключится к серверу",Toast.LENGTH_LONG).show();
+                        Log.e("ответ", "не ок " + errorResponse.toString());
+                    }
                 });
             }
         });
@@ -110,5 +112,14 @@ public class FirstScreenFragment extends Fragment {
             throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    public String getFinalUri(String phone){
+        Uri baseUri = Uri.parse(BASE_URI);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        uriBuilder.appendQueryParameter("phone", phone);
+        uriBuilder.appendQueryParameter("app_id", "3");
+        return uriBuilder.toString();
     }
 }
