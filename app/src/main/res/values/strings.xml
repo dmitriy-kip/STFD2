@@ -16,4 +16,13 @@
     <string name="save_when_failure">Сохранять только не отправленные</string>
     <string name="save_naver">Ничего не сохранять</string>
     <string name="welcome">Добро пожаловать</string>
+    <string name="exit">Выход</string>
+    <string name="num_pas">Введите серию и номер паспорта</string>
+
+    <string-array name="catNames">
+        <item>Барсик</item>
+        <item>Мурзик</item>
+        <item>Васька</item>
+        <item>Рыжик</item>
+    </string-array>
 </resources>

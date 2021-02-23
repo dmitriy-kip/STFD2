@@ -20,12 +20,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.stfd.NavigationFragments;
 import com.example.stfd.R;
 import com.example.stfd.Utils;
 
 public class SettingsFragment extends Fragment {
     private FragmentManager fm;
-    private HistoryFragment.OnSelectedButtonListenerHistory listener;
+    private NavigationFragments listener;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch saveHistoryOnRequest;
     private SharedPreferences.Editor editor;
@@ -42,7 +43,7 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        listener = (HistoryFragment.OnSelectedButtonListenerHistory) getActivity();
+        listener = (NavigationFragments) getActivity();
         if (listener != null) {
             listener.onFragmentInteraction(getString(R.string.settings), 2);
         }
@@ -162,7 +163,7 @@ public class SettingsFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            listener = (HistoryFragment.OnSelectedButtonListenerHistory) context;
+            listener = (NavigationFragments) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");

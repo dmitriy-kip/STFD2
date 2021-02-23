@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.stfd.NavigationFragments;
 import com.example.stfd.R;
 import com.example.stfd.Utils;
 
@@ -20,11 +21,7 @@ import java.util.Objects;
 
 public class HistorySaveDialog extends DialogFragment {
 
-    public interface NoticeDialogListener {
-        void onDialogPositiveClick();
-    }
-
-    private NoticeDialogListener listener;
+    private NavigationFragments listener;
     private int response;
 
     @NonNull
@@ -66,7 +63,7 @@ public class HistorySaveDialog extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            listener = (NoticeDialogListener) context;
+            listener = (NavigationFragments) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(Objects.requireNonNull(getActivity()).toString()
                     + " must implement NoticeDialogListener");

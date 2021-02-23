@@ -9,6 +9,10 @@
         android:icon="@drawable/cross1"
         android:title="@string/history"
         />
+    <item android:id="@+id/exit"
+        android:icon="@drawable/cross1"
+        android:title="@string/exit"
+        />
     <item android:id="@+id/clear"
         android:icon="@drawable/clean1"
         android:title="@string/clean"

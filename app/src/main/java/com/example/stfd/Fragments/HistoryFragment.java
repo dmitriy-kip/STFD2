@@ -26,21 +26,16 @@ import com.example.stfd.DataBase.AppDataBase;
 import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryEntity;
 import com.example.stfd.DataBase.SingletonAppDB;
+import com.example.stfd.NavigationFragments;
 import com.example.stfd.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryFragment extends Fragment {
-    private OnSelectedButtonListenerHistory listener;
-    private HistoryAdapter historyAdapter;
+    private NavigationFragments listener;
     private final List<HistoryEntity> historyItemList = new ArrayList<>();
-    private HistoryDAO historyDAO;
     private FragmentManager fm;
-
-    public interface OnSelectedButtonListenerHistory{
-        void onFragmentInteraction(String title, int index);
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,7 +48,7 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
 
-        listener = (OnSelectedButtonListenerHistory) getActivity();
+        listener = (NavigationFragments) getActivity();
         if (listener != null) {
             listener.onFragmentInteraction(getString(R.string.history), 2);
         }
@@ -61,12 +56,12 @@ public class HistoryFragment extends Fragment {
         fm = getActivity().getSupportFragmentManager();
 
         AppDataBase db = SingletonAppDB.getInstance().getDatabase();
-        historyDAO = db.historyEntity();
+        HistoryDAO historyDAO = db.historyEntity();
         historyItemList.addAll(historyDAO.getAll());
 
         final RecyclerView recyclerViewHistory = rootView.findViewById(R.id.recycle_history);
         recyclerViewHistory.setLayoutManager(new LinearLayoutManager(getContext()));
-        historyAdapter = new HistoryAdapter(getContext(), historyItemList, historyDAO, fm);
+        HistoryAdapter historyAdapter = new HistoryAdapter(getContext(), historyItemList, historyDAO, fm);
         recyclerViewHistory.setAdapter(historyAdapter);
 
         return rootView;
@@ -101,7 +96,7 @@ public class HistoryFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            listener = (OnSelectedButtonListenerHistory) context;
+            listener = (NavigationFragments) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");

@@ -18,6 +18,7 @@ import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryEntity;
 
 import com.example.stfd.Fragments.PhotoSenderFragment;
+import com.example.stfd.NavigationFragments;
 import com.example.stfd.R;
 import com.example.stfd.Utils;
 
@@ -25,10 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
-
-    public interface OnSelectedButtonItem{
-        void onSelectItemHistory(String docNum, String notice, List<String> uris);
-    }
 
     private List<HistoryEntity> historyItemList;
     HistoryDAO historyDAO;
@@ -75,8 +72,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.historyContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                OnSelectedButtonItem buttonItem = (OnSelectedButtonItem) context;
-                buttonItem.onSelectItemHistory(historyItem.docNum, historyItem.notice, historyItem.photos);
+                NavigationFragments buttonItem = (NavigationFragments) context;
+                buttonItem.goToPhotoSender(historyItem.docNum, historyItem.notice, historyItem.photos);
             }
         });
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {

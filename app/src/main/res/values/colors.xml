@@ -3,4 +3,5 @@
     <color name="colorPrimary">#74AFCA</color>
     <color name="colorPrimaryDark">#2B2B2B</color>
     <color name="colorAccent">#307A9C</color>
+    <color name="colorPassport">#FF973C</color>
 </resources>

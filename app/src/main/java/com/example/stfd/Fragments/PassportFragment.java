@@ -2,16 +2,13 @@ package com.example.stfd.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,22 +17,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stfd.Adapters.MyAdapter;
-import com.example.stfd.Adapters.SpinnerAdapter;
 import com.example.stfd.DataBase.AppDataBase;
 import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryEntity;
@@ -50,18 +43,16 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
 
-public class PhotoSenderFragment extends Fragment {
-
+public class PassportFragment extends Fragment {
     private NavigationFragments listener;
     private PhotoEasy photoEasy;
     private MyAdapter myAdapter;
@@ -80,39 +71,35 @@ public class PhotoSenderFragment extends Fragment {
     private SharedPreferences mSettings;
     boolean fromHistory = false;
 
+    @SuppressLint("ResourceAsColor")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_photo_sender, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_pasport, container, false);
 
         listener = (NavigationFragments) getActivity();
         if (listener != null) {
-            listener.onFragmentInteraction(getString(R.string.app_name), 1);
+            listener.onFragmentInteraction("Паспортный стол", 3);
         }
-
-        Spinner spinner = rootView.findViewById(R.id.spinner_test);
-        SpinnerAdapter adapter = new SpinnerAdapter(getActivity(), android.R.layout.simple_spinner_item, );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
 
         mSettings = getActivity().getSharedPreferences("mysettings", Context.MODE_PRIVATE);
 
         Bundle args = getArguments();
         if (args != null){
-            if (args.getString("numDoc") != null) {
-                EditText docNumEdit = rootView.findViewById(R.id.edit_num_doc);
-                docNumEdit.setText(args.getString("numDoc"));
-            }
+            //if (args.getString("numDoc") != null) {
+            EditText docNumEdit = rootView.findViewById(R.id.edit_num_pas);
+            docNumEdit.setText(args.getString("numDoc"));
+            //}
 
-            if (args.getString("notice") != null) {
-                EditText noticeEdit = rootView.findViewById(R.id.edit_notice);
-                noticeEdit.setText(args.getString("notice"));
-            }
+            //if (args.getString("notice") != null) {
+            EditText noticeEdit = rootView.findViewById(R.id.edit_notice);
+            noticeEdit.setText(args.getString("notice"));
+            //}
 
             fromHistory = args.getBoolean("history");
 
             if (args.getStringArray("photosUri") != null && args.getStringArray("photosUri").length > 0) {
-            String[] photosArray = args.getStringArray("photosUri");
+                String[] photosArray = args.getStringArray("photosUri");
                 photosUri.addAll(Arrays.asList(photosArray));
 
                 for (String photo : photosUri) {
@@ -147,7 +134,7 @@ public class PhotoSenderFragment extends Fragment {
                 .setStorageType(PhotoEasy.StorageType.media)
                 .build();
 
-        editNumDoc = rootView.findViewById(R.id.edit_num_doc);
+        editNumDoc = rootView.findViewById(R.id.edit_num_pas);
         editNotice = rootView.findViewById(R.id.edit_notice);
 
         ImageView bigCrossView = rootView.findViewById(R.id.big_cross);
@@ -375,7 +362,7 @@ public class PhotoSenderFragment extends Fragment {
 
     @Override
     public void onResume() {
-        listener.onFragmentInteraction(getString(R.string.app_name), 1);
+        listener.onFragmentInteraction("Паспортный стол", 3);
         super.onResume();
     }
 
@@ -407,3 +394,4 @@ public class PhotoSenderFragment extends Fragment {
         historySaveDialog.show(getActivity().getSupportFragmentManager(), "dialog");
     }
 }
+

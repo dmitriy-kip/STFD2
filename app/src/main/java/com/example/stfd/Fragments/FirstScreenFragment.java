@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.stfd.NavigationFragments;
 import com.example.stfd.R;
 import com.example.stfd.Utils;
 import com.loopj.android.http.AsyncHttpClient;
@@ -34,21 +35,17 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class FirstScreenFragment extends Fragment {
-    private static final String BASE_URI = "http://172.16.0.227:8086/api/auth";
-    private OnSelectedFirstScreenListener listener;
-    private List<String> modules = new ArrayList<>();
+    private static final String BASE_URI = "http://prog-matik.ru:8086/api/auth";
+    private NavigationFragments listener;
+    private List<Integer> modules = new ArrayList<>();
 
-
-    public interface OnSelectedFirstScreenListener extends HistoryFragment.OnSelectedButtonListenerHistory{
-        void goToSender(List<String> modules, String authId);
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_first_screen, container, false);
 
-        listener = (OnSelectedFirstScreenListener) getActivity();
+        listener = (NavigationFragments) getActivity();
         if (listener != null) {
             listener.onFragmentInteraction(getString(R.string.welcome), 1);
         }
@@ -73,9 +70,9 @@ public class FirstScreenFragment extends Fragment {
                             if (projects.length() != 0) {
                                 for (int i = 0; i < projects.length(); i++) {
                                     JSONObject module = projects.getJSONObject(i);
-                                    modules.add(module.getString("name"));
+                                    modules.add(module.getInt("id"));
                                 }
-                                listener.goToSender(modules, authId);
+                                listener.youAreExist(modules, authId);
                             } else {
                                 Toast.makeText(getActivity(), "Вы не зарегестрированны. Обратитесь к администратору", Toast.LENGTH_LONG).show();
                             }
@@ -86,7 +83,7 @@ public class FirstScreenFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         Toast.makeText(getActivity(), "Не удалось подключится к серверу",Toast.LENGTH_LONG).show();
                         Log.e("ответ", "не ок " + errorResponse.toString());
                     }
@@ -107,7 +104,7 @@ public class FirstScreenFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            listener = (OnSelectedFirstScreenListener) context;
+            listener = (NavigationFragments) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
