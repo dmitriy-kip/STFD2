@@ -1,6 +1,8 @@
 package com.example.stfd.Fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,27 +19,27 @@ import androidx.fragment.app.Fragment;
 
 import com.example.stfd.NavigationFragments;
 import com.example.stfd.R;
-import com.example.stfd.Utils;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import cz.msebera.android.httpclient.Header;
 
 public class FirstScreenFragment extends Fragment {
     private static final String BASE_URI = "http://prog-matik.ru:8086/api/auth";
     private NavigationFragments listener;
-    private List<Integer> modules = new ArrayList<>();
+    private LinkedHashSet<String> modules = new LinkedHashSet<>();
+    private SharedPreferences mSettings;
+    private SharedPreferences.Editor editor;
 
 
     @Nullable
@@ -50,6 +52,8 @@ public class FirstScreenFragment extends Fragment {
             listener.onFragmentInteraction(getString(R.string.welcome), 1);
         }
 
+        mSettings = getActivity().getSharedPreferences("mysettings", Context.MODE_PRIVATE);
+
         Button start = rootView.findViewById(R.id.start_button);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +63,7 @@ public class FirstScreenFragment extends Fragment {
 
                 AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
                 client.get(getFinalUri(phone), new JsonHttpResponseHandler(){
+                    @SuppressLint("CommitPrefEdits")
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                         try {
@@ -70,9 +75,15 @@ public class FirstScreenFragment extends Fragment {
                             if (projects.length() != 0) {
                                 for (int i = 0; i < projects.length(); i++) {
                                     JSONObject module = projects.getJSONObject(i);
-                                    modules.add(module.getInt("id"));
+                                    modules.add(module.getString("name"));
                                 }
-                                listener.youAreExist(modules, authId);
+                                Set<String> set = modules;
+                                editor = mSettings.edit();
+                                editor.putStringSet("modules", set);
+
+                                Log.e("ответ","все ок " + set.toString());
+
+                                listener.youAreExist(set, authId);
                             } else {
                                 Toast.makeText(getActivity(), "Вы не зарегестрированны. Обратитесь к администратору", Toast.LENGTH_LONG).show();
                             }

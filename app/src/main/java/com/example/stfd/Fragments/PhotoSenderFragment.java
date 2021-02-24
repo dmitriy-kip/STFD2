@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -57,6 +58,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -90,12 +92,29 @@ public class PhotoSenderFragment extends Fragment {
             listener.onFragmentInteraction(getString(R.string.app_name), 1);
         }
 
+        mSettings = getActivity().getSharedPreferences("mysettings", Context.MODE_PRIVATE);
+
+        //получаем модули которые доступны пользователю и преобразуем их в обычный трококвый массив
+        Set<String> set = mSettings.getStringSet("modules", null);
+        String[] modules = new String[0];
+        if (set != null)
+            modules = set.toArray(new String[set.size()]);
+        //настраиваем выпадающий список
         Spinner spinner = rootView.findViewById(R.id.spinner_test);
-        SpinnerAdapter adapter = new SpinnerAdapter(getActivity(), android.R.layout.simple_spinner_item, );
+        SpinnerAdapter adapter = new SpinnerAdapter(getActivity(), android.R.layout.simple_spinner_item, modules);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
 
-        mSettings = getActivity().getSharedPreferences("mysettings", Context.MODE_PRIVATE);
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                // Set adapter flag that something has been chosen
+
+            }
+        });
 
         Bundle args = getArguments();
         if (args != null){

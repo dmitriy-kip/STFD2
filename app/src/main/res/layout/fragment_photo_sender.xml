@@ -13,6 +13,11 @@
         android:layout_alignParentTop="true"
         android:orientation="vertical">
 
+        <Spinner
+            android:id="@+id/spinner_test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <EditText
             android:id="@+id/edit_num_doc"
             android:layout_width="match_parent"

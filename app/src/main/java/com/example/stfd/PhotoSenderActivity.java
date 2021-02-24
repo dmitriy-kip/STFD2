@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class PhotoSenderActivity extends AppCompatActivity implements NavigationFragments {
 
@@ -61,7 +62,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
     }
 
     @Override
-    public void goToPhotoSender(String docNum, String notice, List<String> uris, String[] modules) {
+    public void goToPhotoSender(String docNum, String notice, List<String> uris) {
         FragmentTransaction ft = fm.beginTransaction();
         photoSenderFragment = new PhotoSenderFragment();
 
@@ -73,8 +74,6 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
         if (uris != null)
             ar = (String[]) uris.toArray();
         args.putStringArray("photosUri", ar);
-        if (modules != null)
-            args.putStringArray("modules", modules);
         photoSenderFragment.setArguments(args);
 
         ft.replace(R.id.container, photoSenderFragment, "historyFragment");
@@ -126,20 +125,20 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
     //не забудь добавить authId в Shared Preferences
     @SuppressLint("CommitPrefEdits")
     @Override
-    public void youAreExist(List<Integer> modules, String authId) {
+    public void youAreExist(Set<String> modules, String authId) {
         editor = mSettings.edit();
         EditText pn = findViewById(R.id.phone_number);
         String phoneNumber = pn.getText().toString();
 
-        for (int i = 0; i < modules.size(); i++) {
-            switch (modules.get(i)) {
-                case 1:
+        for (String module : modules) {
+            switch (module) {
+                case "ЦООГ":
                     editor.putString("phone", phoneNumber);
                     editor.apply();
                     
                     goToPhotoSender(null,null,null);
                     return;
-                case 2:
+                case "Паспортный стол":
                     editor.putString("phone", phoneNumber);
                     editor.apply();
 
