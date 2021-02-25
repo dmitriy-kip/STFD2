@@ -101,7 +101,8 @@ public class PhotoSenderFragment extends Fragment {
             modules = set.toArray(new String[set.size()]);
         //настраиваем выпадающий список
         Spinner spinner = rootView.findViewById(R.id.spinner_test);
-        SpinnerAdapter adapter = new SpinnerAdapter(getActivity(), android.R.layout.simple_spinner_item, modules);
+        //SpinnerAdapter adapter = new SpinnerAdapter(getActivity(), android.R.layout.simple_spinner_item, modules);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, modules);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -112,9 +113,19 @@ public class PhotoSenderFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 // Set adapter flag that something has been chosen
-
+                switch (pos){
+                    case 0:
+                        Toast.makeText(getContext(), "ЦООГ",Toast.LENGTH_LONG).show();
+                        break;
+                    case 1:
+                        Toast.makeText(getContext(), "Паспортный",Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                }
             }
         });
+
+
 
         Bundle args = getArguments();
         if (args != null){

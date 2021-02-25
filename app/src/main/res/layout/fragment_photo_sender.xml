@@ -73,7 +73,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:src="@drawable/send"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="8dp"
             android:visibility="invisible"/>
 
         <ImageView
@@ -81,14 +81,14 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:src="@drawable/photo"
-            android:layout_marginHorizontal="16dp"/>
+            android:layout_marginHorizontal="8dp"/>
 
         <ImageView
             android:id="@+id/gallery"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:src="@drawable/gallery"
-            android:layout_marginHorizontal="16dp"/>
+            android:layout_marginHorizontal="8dp"/>
     </LinearLayout>
 
     <RelativeLayout

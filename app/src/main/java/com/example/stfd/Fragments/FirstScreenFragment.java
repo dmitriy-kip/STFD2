@@ -80,6 +80,7 @@ public class FirstScreenFragment extends Fragment {
                                 Set<String> set = modules;
                                 editor = mSettings.edit();
                                 editor.putStringSet("modules", set);
+                                editor.apply();
 
                                 Log.e("ответ","все ок " + set.toString());
 
