@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.stfd.Adapters.HistoryAdapter;
 import com.example.stfd.Adapters.MyAdapter;
+import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.Fragments.FirstScreenFragment;
 import com.example.stfd.Fragments.HistoryFragment;
 //import com.thorny.photoeasy.OnPictureReady;
@@ -83,10 +84,15 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
     }
 
     @Override
-    public void goToHistory() {
+    public void goToHistory(int indexModule) {
         fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         HistoryFragment historyFragment = new HistoryFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("module", indexModule);
+        historyFragment.setArguments(args);
+
         ft.replace(R.id.container, historyFragment, "historyFragment");
         ft.addToBackStack(null);
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -173,13 +179,14 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
         switch (index){
             case 1:
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(getString(R.color.colorPrimary))));
                 break;
             case 2:
                 getSupportActionBar().setHomeButtonEnabled(true);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 break;
             case 3:
-                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF973C")));
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(getString(R.color.colorPassport))));
                 break;
             default:
         }

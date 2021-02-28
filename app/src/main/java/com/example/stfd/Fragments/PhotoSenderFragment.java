@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -94,38 +96,8 @@ public class PhotoSenderFragment extends Fragment {
 
         mSettings = getActivity().getSharedPreferences("mysettings", Context.MODE_PRIVATE);
 
-        //получаем модули которые доступны пользователю и преобразуем их в обычный трококвый массив
-        Set<String> set = mSettings.getStringSet("modules", null);
-        String[] modules = new String[0];
-        if (set != null)
-            modules = set.toArray(new String[set.size()]);
-        //настраиваем выпадающий список
         Spinner spinner = rootView.findViewById(R.id.spinner_test);
-        //SpinnerAdapter adapter = new SpinnerAdapter(getActivity(), android.R.layout.simple_spinner_item, modules);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, modules);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                // Set adapter flag that something has been chosen
-                switch (pos){
-                    case 0:
-                        Toast.makeText(getContext(), "ЦООГ",Toast.LENGTH_LONG).show();
-                        break;
-                    case 1:
-                        Toast.makeText(getContext(), "Паспортный",Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                }
-            }
-        });
-
-
+        Utils.makeSpinner("ЦООГ", getActivity(), listener, spinner);
 
         Bundle args = getArguments();
         if (args != null){
@@ -373,7 +345,7 @@ public class PhotoSenderFragment extends Fragment {
                 listener.goToSettings();
                 return true;
             case R.id.history:
-                listener.goToHistory();
+                listener.goToHistory(1);
                 return true;
             case R.id.clear:
                 clearAllFields();

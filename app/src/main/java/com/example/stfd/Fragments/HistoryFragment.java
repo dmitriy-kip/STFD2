@@ -26,6 +26,7 @@ import com.example.stfd.DataBase.AppDataBase;
 import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryEntity;
 import com.example.stfd.DataBase.SingletonAppDB;
+import com.example.stfd.DataBase.SingletonAppDBPassport;
 import com.example.stfd.NavigationFragments;
 import com.example.stfd.R;
 
@@ -55,9 +56,28 @@ public class HistoryFragment extends Fragment {
 
         fm = getActivity().getSupportFragmentManager();
 
-        AppDataBase db = SingletonAppDB.getInstance().getDatabase();
-        HistoryDAO historyDAO = db.historyEntity();
-        historyItemList.addAll(historyDAO.getAll());
+        int indexModule = 0;
+        Bundle args = getArguments();
+        if (args != null){
+            indexModule = args.getInt("module");
+        }
+
+        HistoryDAO historyDAO;
+        switch (indexModule){
+            case 1:
+                AppDataBase db = SingletonAppDB.getInstance().getDatabase();
+                historyDAO = db.historyEntity();
+                break;
+            case 2:
+                AppDataBase dbPassport = SingletonAppDBPassport.getInstance().getDatabase();
+                historyDAO = dbPassport.historyEntity();
+                break;
+            default:
+                historyDAO = null;
+        }
+
+        if (historyDAO != null)
+            historyItemList.addAll(historyDAO.getAll());
 
         final RecyclerView recyclerViewHistory = rootView.findViewById(R.id.recycle_history);
         recyclerViewHistory.setLayoutManager(new LinearLayoutManager(getContext()));

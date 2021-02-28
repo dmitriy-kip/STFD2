@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ import com.example.stfd.DataBase.AppDataBase;
 import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryEntity;
 import com.example.stfd.DataBase.SingletonAppDB;
+import com.example.stfd.DataBase.SingletonAppDBPassport;
 import com.example.stfd.MyPhotoEasy.OnPictureReady;
 import com.example.stfd.MyPhotoEasy.PhotoEasy;
 import com.example.stfd.NavigationFragments;
@@ -83,6 +85,9 @@ public class PassportFragment extends Fragment {
         }
 
         mSettings = getActivity().getSharedPreferences("mysettings", Context.MODE_PRIVATE);
+        Spinner spinner = rootView.findViewById(R.id.spinner_test);
+
+        Utils.makeSpinner("Паспортный стол", getActivity(), listener, spinner);
 
         Bundle args = getArguments();
         if (args != null){
@@ -121,8 +126,8 @@ public class PassportFragment extends Fragment {
         sendPhoto = rootView.findViewById(R.id.sendToServer);
         previewPhoto = rootView.findViewById(R.id.preview_photo);
 
-        AppDataBase db = SingletonAppDB.getInstance().getDatabase();
-        historyDAO = db.historyEntity();
+        AppDataBase dbPassport = SingletonAppDBPassport.getInstance().getDatabase();
+        historyDAO = dbPassport.historyEntity();
 
         final RecyclerView recyclerView = rootView.findViewById(R.id.recycle_list);
         myAdapter = new MyAdapter(getContext(), bitmapList, sendPhoto, previewPhoto, photosUri);
@@ -258,10 +263,6 @@ public class PassportFragment extends Fragment {
         return rootView;
     }
 
-    public void onKeyDown(){
-        previewPhoto.setVisibility(View.INVISIBLE);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -330,7 +331,7 @@ public class PassportFragment extends Fragment {
                 listener.goToSettings();
                 return true;
             case R.id.history:
-                listener.goToHistory();
+                listener.goToHistory(2);
                 return true;
             case R.id.clear:
                 clearAllFields();

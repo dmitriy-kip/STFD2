@@ -1,14 +1,11 @@
 package com.example.stfd.DataBase;
 
-import android.graphics.Bitmap;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,10 +30,6 @@ public class HistoryEntity {
         this.notice = notice;
         this.time = time;
         this.photos = photos;
-    }
-
-    public int getHid() {
-        return hid;
     }
 
     public String getDocNum() {

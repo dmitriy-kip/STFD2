@@ -1,10 +1,17 @@
 package com.example.stfd;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -14,6 +21,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 public class Utils {
@@ -86,5 +94,54 @@ public class Utils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         Date date = new Date();
         return dateFormat.format(date);
+    }
+
+    public static void makeSpinner(String module, Activity activity, final NavigationFragments listener, Spinner spinner){
+        SharedPreferences mSettings = activity.getSharedPreferences("mysettings", Context.MODE_PRIVATE);
+
+        //получаем модули которые доступны пользователю и преобразуем их в обычный строковый массив
+        //если модулей 1, тогда нам не нужен выпадающий список
+        Set<String> set = mSettings.getStringSet("modules", null);
+        String[] modules;
+        if (set != null && set.size() > 1)
+            modules = set.toArray(new String[set.size()]);
+        else {
+            spinner.setVisibility(View.INVISIBLE);
+            return;
+        }
+        //настраиваем выпадающий список
+        //SpinnerAdapter adapter = new SpinnerAdapter(getActivity(), android.R.layout.simple_spinner_item, modules);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, modules);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        int index = 0;
+        final String[] finalModules = modules;
+        for (int i = 0; i < finalModules.length; i++) {
+            if (finalModules[i].equals(module)) index = i;
+        }
+        final int indexOfModule = index;
+        spinner.setSelection(indexOfModule);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if (pos == indexOfModule) return;
+
+                String module = finalModules[pos];
+                switch (module){
+                    case "ЦООГ":
+                        listener.goToPhotoSender(null,null, null);
+                        break;
+                    case "Паспортный стол":
+                        listener.goToPassport();
+                        break;
+                    default:
+                }
+            }
+        });
     }
 }
