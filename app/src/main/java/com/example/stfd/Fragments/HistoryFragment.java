@@ -1,10 +1,7 @@
 package com.example.stfd.Fragments;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,14 +16,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import com.example.stfd.Adapters.HistoryAdapter;
 import com.example.stfd.DataBase.AppDataBase;
 import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryEntity;
 import com.example.stfd.DataBase.SingletonAppDB;
-import com.example.stfd.DataBase.SingletonAppDBPassport;
 import com.example.stfd.NavigationFragments;
 import com.example.stfd.R;
 
@@ -69,7 +64,7 @@ public class HistoryFragment extends Fragment {
                 historyDAO = db.historyEntity();
                 break;
             case 2:
-                AppDataBase dbPassport = SingletonAppDBPassport.getInstance().getDatabase();
+                AppDataBase dbPassport = SingletonAppDB.getInstance().getDatabasePassport();
                 historyDAO = dbPassport.historyEntity();
                 break;
             default:

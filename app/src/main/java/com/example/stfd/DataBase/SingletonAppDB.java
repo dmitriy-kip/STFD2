@@ -8,6 +8,7 @@ public class SingletonAppDB extends Application {
     public static SingletonAppDB instance;
 
     private AppDataBase database;
+    private AppDataBase databasePassport;
 
     @Override
     public void onCreate() {
@@ -16,6 +17,8 @@ public class SingletonAppDB extends Application {
         database = Room.databaseBuilder(this, AppDataBase.class, "database")
                 .allowMainThreadQueries()
                 .build();
+
+        databasePassport = Room.databaseBuilder(this, AppDataBase.class, "databasePassport").allowMainThreadQueries().build();
     }
 
     public static SingletonAppDB getInstance() {
@@ -25,4 +28,6 @@ public class SingletonAppDB extends Application {
     public AppDataBase getDatabase() {
         return database;
     }
+
+    public AppDataBase getDatabasePassport(){return databasePassport;}
 }

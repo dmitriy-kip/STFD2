@@ -186,6 +186,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 break;
             case 3:
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(getString(R.color.colorPassport))));
                 break;
             default:

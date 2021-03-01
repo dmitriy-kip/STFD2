@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -34,7 +33,6 @@ import com.example.stfd.DataBase.AppDataBase;
 import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryEntity;
 import com.example.stfd.DataBase.SingletonAppDB;
-import com.example.stfd.DataBase.SingletonAppDBPassport;
 import com.example.stfd.MyPhotoEasy.OnPictureReady;
 import com.example.stfd.MyPhotoEasy.PhotoEasy;
 import com.example.stfd.NavigationFragments;
@@ -50,7 +48,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -126,8 +123,8 @@ public class PassportFragment extends Fragment {
         sendPhoto = rootView.findViewById(R.id.sendToServer);
         previewPhoto = rootView.findViewById(R.id.preview_photo);
 
-        AppDataBase dbPassport = SingletonAppDBPassport.getInstance().getDatabase();
-        historyDAO = dbPassport.historyEntity();
+        AppDataBase dbPassport = SingletonAppDB.getInstance().getDatabasePassport();
+        historyDAO = dbPassport.historyEntityPassport();
 
         final RecyclerView recyclerView = rootView.findViewById(R.id.recycle_list);
         myAdapter = new MyAdapter(getContext(), bitmapList, sendPhoto, previewPhoto, photosUri);
