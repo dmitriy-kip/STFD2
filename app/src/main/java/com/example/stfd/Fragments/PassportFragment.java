@@ -31,7 +31,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.stfd.Adapters.MyAdapter;
 import com.example.stfd.DataBase.AppDataBase;
 import com.example.stfd.DataBase.HistoryDAO;
-import com.example.stfd.DataBase.HistoryEntity;
+import com.example.stfd.DataBase.HistoryDAOPassport;
+import com.example.stfd.DataBase.HistoryEntityPassport;
 import com.example.stfd.DataBase.SingletonAppDB;
 import com.example.stfd.MyPhotoEasy.OnPictureReady;
 import com.example.stfd.MyPhotoEasy.PhotoEasy;
@@ -59,7 +60,7 @@ public class PassportFragment extends Fragment {
     private ImageView sendPhoto;
     private final ArrayList<File> listImages = new ArrayList<>();
     private List<String> photosUri = new ArrayList<>();
-    private HistoryDAO historyDAO;
+    private HistoryDAOPassport historyDAO;
     private final Fragment f = this;
     private RelativeLayout previewPhoto;
     private EditText editNumDoc;
@@ -123,7 +124,8 @@ public class PassportFragment extends Fragment {
         sendPhoto = rootView.findViewById(R.id.sendToServer);
         previewPhoto = rootView.findViewById(R.id.preview_photo);
 
-        AppDataBase dbPassport = SingletonAppDB.getInstance().getDatabasePassport();
+        //для каждого модуля своя таблица в базе
+        AppDataBase dbPassport = SingletonAppDB.getInstance().getDatabase();
         historyDAO = dbPassport.historyEntityPassport();
 
         final RecyclerView recyclerView = rootView.findViewById(R.id.recycle_list);
@@ -377,7 +379,7 @@ public class PassportFragment extends Fragment {
 
 
     public void saveData() {
-        historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate(), photosUri));
+        historyDAO.insertAllPassport(new HistoryEntityPassport(numDoc, notice, Utils.currentDate(), photosUri));
     }
 
     //вызывает диалоговое окно с вопросом о сохранении

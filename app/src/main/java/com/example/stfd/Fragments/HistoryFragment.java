@@ -18,8 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stfd.Adapters.HistoryAdapter;
+import com.example.stfd.Adapters.HistoryAdapterPassport;
 import com.example.stfd.DataBase.AppDataBase;
+import com.example.stfd.DataBase.BasicEntity;
 import com.example.stfd.DataBase.HistoryDAO;
+import com.example.stfd.DataBase.HistoryDAOPassport;
 import com.example.stfd.DataBase.HistoryEntity;
 import com.example.stfd.DataBase.SingletonAppDB;
 import com.example.stfd.NavigationFragments;
@@ -30,7 +33,7 @@ import java.util.List;
 
 public class HistoryFragment extends Fragment {
     private NavigationFragments listener;
-    private final List<HistoryEntity> historyItemList = new ArrayList<>();
+    private final List<BasicEntity> historyItemList = new ArrayList<>();
     private FragmentManager fm;
 
     @Override
@@ -57,27 +60,29 @@ public class HistoryFragment extends Fragment {
             indexModule = args.getInt("module");
         }
 
-        HistoryDAO historyDAO;
+        final RecyclerView recyclerViewHistory = rootView.findViewById(R.id.recycle_history);
+        recyclerViewHistory.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        //для каждого модуля создается свой собственный адаптер
+        //есть подозрения что это не лучшая идея, но я не знаю что будет представлять из себя следующий модуль, думаю со временем разберусь с этим
         switch (indexModule){
             case 1:
                 AppDataBase db = SingletonAppDB.getInstance().getDatabase();
-                historyDAO = db.historyEntity();
+                HistoryDAO historyDAO = db.historyEntity();
+                historyItemList.addAll(historyDAO.getAll());
+                HistoryAdapter historyAdapter = new HistoryAdapter(getContext(), historyItemList, historyDAO, fm);
+                recyclerViewHistory.setAdapter(historyAdapter);
                 break;
             case 2:
-                AppDataBase dbPassport = SingletonAppDB.getInstance().getDatabasePassport();
-                historyDAO = dbPassport.historyEntity();
+                AppDataBase dbPassport = SingletonAppDB.getInstance().getDatabase();
+                HistoryDAOPassport historyDAOPassport = dbPassport.historyEntityPassport();
+                historyItemList.addAll(historyDAOPassport.getAllPassport());
+                HistoryAdapterPassport historyAdapterPassport = new HistoryAdapterPassport(getContext(), historyItemList, historyDAOPassport, fm);
+                recyclerViewHistory.setAdapter(historyAdapterPassport);
                 break;
             default:
-                historyDAO = null;
+
         }
-
-        if (historyDAO != null)
-            historyItemList.addAll(historyDAO.getAll());
-
-        final RecyclerView recyclerViewHistory = rootView.findViewById(R.id.recycle_history);
-        recyclerViewHistory.setLayoutManager(new LinearLayoutManager(getContext()));
-        HistoryAdapter historyAdapter = new HistoryAdapter(getContext(), historyItemList, historyDAO, fm);
-        recyclerViewHistory.setAdapter(historyAdapter);
 
         return rootView;
     }

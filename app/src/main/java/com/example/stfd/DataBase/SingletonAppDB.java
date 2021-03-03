@@ -18,7 +18,9 @@ public class SingletonAppDB extends Application {
                 .allowMainThreadQueries()
                 .build();
 
-        databasePassport = Room.databaseBuilder(this, AppDataBase.class, "databasePassport").allowMainThreadQueries().build();
+        databasePassport = Room.databaseBuilder(this, AppDataBase.class, "databasePassport")
+                .allowMainThreadQueries()
+                .build();
     }
 
     public static SingletonAppDB getInstance() {

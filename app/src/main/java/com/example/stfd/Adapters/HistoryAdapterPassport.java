@@ -1,7 +1,6 @@
 package com.example.stfd.Adapters;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,25 +10,22 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stfd.DataBase.BasicEntity;
 import com.example.stfd.DataBase.HistoryDAO;
+import com.example.stfd.DataBase.HistoryDAOPassport;
 import com.example.stfd.DataBase.HistoryEntity;
-
-import com.example.stfd.Fragments.PhotoSenderFragment;
+import com.example.stfd.DataBase.HistoryEntityPassport;
 import com.example.stfd.NavigationFragments;
 import com.example.stfd.R;
-import com.example.stfd.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
+public class HistoryAdapterPassport extends RecyclerView.Adapter<HistoryAdapterPassport.ViewHolder> {
 
     private List<BasicEntity> historyItemList;
-    HistoryDAO historyDAO;
+    HistoryDAOPassport historyDAO;
     FragmentManager fm;
     Context context;
     //private LayoutInflater inflater;
@@ -49,7 +45,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         }
     }
 
-    public HistoryAdapter(Context context,List<BasicEntity> historyItemList, HistoryDAO historyDAO, FragmentManager fm) {
+    public HistoryAdapterPassport(Context context, List<BasicEntity> historyItemList, HistoryDAOPassport historyDAO, FragmentManager fm) {
         this.historyItemList = historyItemList;
         this.historyDAO = historyDAO;
         this.fm = fm;
@@ -67,7 +63,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final HistoryEntity historyItem = (HistoryEntity) historyItemList.get(position);
+        final HistoryEntityPassport historyItem = (HistoryEntityPassport) historyItemList.get(position);
         holder.numDoc.setText(historyItem.getDocNum());
         holder.time.setText(historyItem.getTime());
         holder.historyContainer.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +76,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                historyDAO.delete(historyItem);
+                historyDAO.deletePassport(historyItem);
                 historyItemList.remove(historyItem);
                 notifyDataSetChanged();
             }

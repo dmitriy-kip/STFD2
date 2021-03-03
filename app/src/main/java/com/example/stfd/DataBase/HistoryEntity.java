@@ -9,7 +9,7 @@ import androidx.room.TypeConverters;
 import java.util.List;
 
 @Entity
-public class HistoryEntity {
+public class HistoryEntity extends BasicEntity {
     @PrimaryKey(autoGenerate = true)
     public int hid;
 

@@ -12,8 +12,8 @@ public interface HistoryDAO {
     @Query("SELECT * FROM historyentity")
     List<HistoryEntity> getAll();
 
-    @Query("SELECT * FROM historyentity WHERE hid IN (:hIds)")
-    List<HistoryEntity> loadAllByIds(int[] hIds);
+    /*@Query("SELECT * FROM historyentity WHERE hid IN (:hIds)")
+    List<HistoryEntity> loadAllByIds(int[] hIds);*/
 
     @Insert
     void insertAll(HistoryEntity... historyEntities);
