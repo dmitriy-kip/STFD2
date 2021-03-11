@@ -44,6 +44,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
     private PhotoSenderFragment photoSenderFragment;
     private SharedPreferences mSettings;
     private SharedPreferences.Editor editor;
+    private PassportFragment passportFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,17 +123,17 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
     @Override
     public void goToPassport() {
         fm = getSupportFragmentManager();
-        PassportFragment passportFragment = new PassportFragment();
+        passportFragment = new PassportFragment();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.container, passportFragment, "passportFragment");
         ft.commit();
     }
 
-    //не забудь добавить authId в Shared Preferences
     @SuppressLint("CommitPrefEdits")
     @Override
     public void youAreExist(Set<String> modules, String authId) {
         editor = mSettings.edit();
+        editor.putString("authId", authId);
         EditText pn = findViewById(R.id.phone_number);
         String phoneNumber = pn.getText().toString();
 
@@ -154,6 +155,18 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
             }
         }
         Log.e("норм  ", modules.toString() + "\n" + authId);
+    }
+
+    @Override
+    public void executeDialog(int response, int indexModule) {
+        HistorySaveDialog historySaveDialog = new HistorySaveDialog();
+
+        Bundle args1 = new Bundle();
+        args1.putInt("response", response);
+        args1.putInt("module", indexModule);
+        historySaveDialog.setArguments(args1);
+
+        historySaveDialog.show(getSupportFragmentManager(), "dialog");
     }
 
     @Override
@@ -195,8 +208,15 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
     }
 
     @Override
-    public void onDialogPositiveClick() {
-        photoSenderFragment.saveData();
-
+    public void onDialogPositiveClick(int indexModule) {
+        switch (indexModule){
+            case 1:
+                photoSenderFragment.saveData();
+                break;
+            case 2:
+                passportFragment.saveData();
+                break;
+            default:
+        }
     }
 }

@@ -183,6 +183,9 @@ public class PassportFragment extends Fragment {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
+
+                //получаем id пользователя, что бы понимать кто что оправил
+                String authId = mSettings.getString("authId", "0");
                 params.put("income_num", numDoc);
                 params.put("file_desc", notice);
                 client.post("http://prog-matik.ru:8086/api/upload_file",params,new TextHttpResponseHandler(){
@@ -196,7 +199,7 @@ public class PassportFragment extends Fragment {
                                 Toast.makeText(getActivity(), "Информация успешно отправлена", Toast.LENGTH_LONG).show();
                                 break;
                             case Utils.SAVE_HISTORY_ON_REQUEST:
-                                executeDialog(Utils.RESPONSE_IS_OK);
+                                listener.executeDialog(Utils.RESPONSE_IS_OK, 2);
                                 break;
                             case Utils.SAVE_HISTORY_WHEN_FAILURE:
                             case Utils.SAVE_HISTORY_NEVER:
@@ -219,7 +222,7 @@ public class PassportFragment extends Fragment {
                                 saveData();
                                 break;
                             case Utils.SAVE_HISTORY_ON_REQUEST:
-                                executeDialog(Utils.RESPONSE_IS_FAILURE);
+                                listener.executeDialog(Utils.RESPONSE_IS_FAILURE, 2);
                                 break;
                             case Utils.SAVE_HISTORY_NEVER:
                                 Toast.makeText(getActivity(), "Не удалось отправить", Toast.LENGTH_LONG).show();
@@ -380,18 +383,6 @@ public class PassportFragment extends Fragment {
 
     public void saveData() {
         historyDAO.insertAllPassport(new HistoryEntityPassport(numDoc, notice, Utils.currentDate(), photosUri));
-    }
-
-    //вызывает диалоговое окно с вопросом о сохранении
-    //возможно лучше вызывать из активити, надо подумать об этом
-    private void executeDialog(int response){
-        HistorySaveDialog historySaveDialog = new HistorySaveDialog();
-
-        Bundle args1 = new Bundle();
-        args1.putInt("response", response);
-        historySaveDialog.setArguments(args1);
-
-        historySaveDialog.show(getActivity().getSupportFragmentManager(), "dialog");
     }
 }
 

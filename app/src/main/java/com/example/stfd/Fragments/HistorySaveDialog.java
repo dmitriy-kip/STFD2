@@ -23,6 +23,7 @@ public class HistorySaveDialog extends DialogFragment {
 
     private NavigationFragments listener;
     private int response;
+    private int indexModule;
 
     @NonNull
     @Override
@@ -30,6 +31,7 @@ public class HistorySaveDialog extends DialogFragment {
         Bundle arg = getArguments();
         if (arg != null){
             this.response = arg.getInt("response");
+            this.indexModule = arg.getInt("module");
         }
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         String message = "";
@@ -47,7 +49,7 @@ public class HistorySaveDialog extends DialogFragment {
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        listener.onDialogPositiveClick();
+                        listener.onDialogPositiveClick(indexModule);
                     }
                 })
                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

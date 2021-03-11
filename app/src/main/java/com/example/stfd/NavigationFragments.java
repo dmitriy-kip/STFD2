@@ -12,7 +12,7 @@ public interface NavigationFragments {
     void goToFirstScreen();
     void goToPassport();
     void onFragmentInteraction(String title, int index);
-    void onDialogPositiveClick();
+    void onDialogPositiveClick(int indexModule);
     void youAreExist(Set<String> modules, String authId);
-
+    void executeDialog(int response, int indexModule);
 }
