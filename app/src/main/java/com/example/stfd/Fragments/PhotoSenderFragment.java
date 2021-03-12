@@ -82,7 +82,8 @@ public class PhotoSenderFragment extends Fragment {
     private String notice;
     private int saveHistory = Utils.SAVE_HISTORY_ON_REQUEST;
     private SharedPreferences mSettings;
-    boolean fromHistory = false;
+    private boolean fromHistory = false;
+    private boolean status;
 
     @Nullable
     @Override
@@ -168,6 +169,12 @@ public class PhotoSenderFragment extends Fragment {
                     return;
                 }
 
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 final RelativeLayout progressCircle = rootView.findViewById(R.id.progress_circular1);
                 progressCircle.setVisibility(View.VISIBLE);
 
@@ -194,6 +201,8 @@ public class PhotoSenderFragment extends Fragment {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
+                String authId = mSettings.getString("authId", "0");
+                params.put("authId", authId);
                 params.put("income_num", numDoc);
                 params.put("file_desc", notice);
                 client.post("http://prog-matik.ru:8086/api/upload_file",params,new TextHttpResponseHandler(){
@@ -201,6 +210,7 @@ public class PhotoSenderFragment extends Fragment {
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
                         progressCircle.setVisibility(View.INVISIBLE);
 
+                        status = true;
                         switch (saveHistory){
                             case Utils.SAVE_HISTORY_ALWAYS:
                                 saveData();
@@ -223,6 +233,7 @@ public class PhotoSenderFragment extends Fragment {
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         progressCircle.setVisibility(View.INVISIBLE);
 
+                        status = false;
                         switch (saveHistory) {
                             case Utils.SAVE_HISTORY_ALWAYS:
                             case Utils.SAVE_HISTORY_WHEN_FAILURE:
@@ -394,7 +405,7 @@ public class PhotoSenderFragment extends Fragment {
 
 
     public void saveData() {
-        historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate(), photosUri));
+        historyDAO.insertAll(new HistoryEntity(numDoc, notice, Utils.currentDate(), photosUri, status));
     }
 
 }

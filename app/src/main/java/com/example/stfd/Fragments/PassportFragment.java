@@ -70,6 +70,7 @@ public class PassportFragment extends Fragment {
     private int saveHistory = Utils.SAVE_HISTORY_ON_REQUEST;
     private SharedPreferences mSettings;
     boolean fromHistory = false;
+    boolean status;
 
     @SuppressLint("ResourceAsColor")
     @Nullable
@@ -157,6 +158,12 @@ public class PassportFragment extends Fragment {
                     return;
                 }
 
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 final RelativeLayout progressCircle = rootView.findViewById(R.id.progress_circular1);
                 progressCircle.setVisibility(View.VISIBLE);
 
@@ -186,12 +193,16 @@ public class PassportFragment extends Fragment {
 
                 //получаем id пользователя, что бы понимать кто что оправил
                 String authId = mSettings.getString("authId", "0");
+                params.put("authId", authId);
+
                 params.put("income_num", numDoc);
                 params.put("file_desc", notice);
                 client.post("http://prog-matik.ru:8086/api/upload_file",params,new TextHttpResponseHandler(){
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
                         progressCircle.setVisibility(View.INVISIBLE);
+
+                        status = true;
 
                         switch (saveHistory){
                             case Utils.SAVE_HISTORY_ALWAYS:
@@ -214,6 +225,8 @@ public class PassportFragment extends Fragment {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         progressCircle.setVisibility(View.INVISIBLE);
+
+                        status = false;
 
                         switch (saveHistory) {
                             case Utils.SAVE_HISTORY_ALWAYS:
@@ -382,7 +395,7 @@ public class PassportFragment extends Fragment {
 
 
     public void saveData() {
-        historyDAO.insertAllPassport(new HistoryEntityPassport(numDoc, notice, Utils.currentDate(), photosUri));
+        historyDAO.insertAllPassport(new HistoryEntityPassport(numDoc, notice, Utils.currentDate(), photosUri, status));
     }
 }
 

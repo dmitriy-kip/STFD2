@@ -18,6 +18,8 @@
     <string name="welcome">Добро пожаловать</string>
     <string name="exit">Выход</string>
     <string name="num_pas">Введите серию и номер паспорта</string>
+    <string name="sent">Отправлено</string>
+    <string name="not_sent">Не отправлено</string>
 
     <string-array name="catNames">
         <item>Барсик</item>

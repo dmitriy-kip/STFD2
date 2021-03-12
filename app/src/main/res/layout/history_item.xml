@@ -29,11 +29,21 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="16dp"
+        android:text="@string/sent"
+        android:textColor="#4CAF50"
+        android:textStyle="bold" />
+
     <ImageView
         android:id="@+id/history_delete_item"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@drawable/delete"
+        android:src="@drawable/delete1"
         android:layout_weight="0"
         android:layout_gravity="center"
         android:layout_margin="8dp"/>

@@ -22,14 +22,18 @@ public class HistoryEntityPassport extends BasicEntity {
     @ColumnInfo(name = "time")
     public String time;
 
+    @ColumnInfo(name = "status")
+    public boolean status;
+
     @TypeConverters({PhotosUriConverter.class})
     public List<String> photos;
 
-    public HistoryEntityPassport(String docNum, String notice, String time, List<String> photos) {
+    public HistoryEntityPassport(String docNum, String notice, String time, List<String> photos, boolean status) {
         this.docNum = docNum;
         this.notice = notice;
         this.time = time;
         this.photos = photos;
+        this.status = status;
     }
 
     public String getDocNum() {

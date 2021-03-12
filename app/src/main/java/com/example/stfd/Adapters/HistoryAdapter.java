@@ -1,6 +1,7 @@
 package com.example.stfd.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         TextView time;
         LinearLayout historyContainer;
         ImageView deleteButton;
+        TextView sendingStatus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -46,6 +48,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             this.time = itemView.findViewById(R.id.history_time);
             this.historyContainer = itemView.findViewById(R.id.history_container);
             this.deleteButton = itemView.findViewById(R.id.history_delete_item);
+            this.sendingStatus = itemView.findViewById(R.id.status);
         }
     }
 
@@ -70,6 +73,15 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         final HistoryEntity historyItem = (HistoryEntity) historyItemList.get(position);
         holder.numDoc.setText(historyItem.getDocNum());
         holder.time.setText(historyItem.getTime());
+
+        if (historyItem.status){
+            holder.sendingStatus.setText(R.string.sent);
+            holder.sendingStatus.setTextColor(Color.parseColor("#4CAF50"));
+        } else {
+            holder.sendingStatus.setText(R.string.not_sent);
+            holder.sendingStatus.setTextColor(Color.parseColor("#F44336"));
+        }
+
         holder.historyContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,6 +89,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 buttonItem.goToPhotoSender(historyItem.docNum, historyItem.notice, historyItem.photos);
             }
         });
+
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,6 +98,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 notifyDataSetChanged();
             }
         });
+
+
     }
 
     @Override
