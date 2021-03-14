@@ -137,7 +137,7 @@ public class Utils {
                         listener.goToPhotoSender(null,null, null);
                         break;
                     case "Паспортный стол":
-                        listener.goToPassport();
+                        listener.goToPassport(null, null, null);
                         break;
                     default:
                 }

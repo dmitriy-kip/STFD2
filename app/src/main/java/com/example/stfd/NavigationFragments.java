@@ -10,7 +10,7 @@ public interface NavigationFragments {
     void goToHistory(int indexModule);
     void goToSettings();
     void goToFirstScreen();
-    void goToPassport();
+    void goToPassport(String docNum, String notice, List<String> uris);
     void onFragmentInteraction(String title, int index);
     void onDialogPositiveClick(int indexModule);
     void youAreExist(Set<String> modules, String authId);

@@ -49,7 +49,7 @@ public class FirstScreenFragment extends Fragment {
 
         listener = (NavigationFragments) getActivity();
         if (listener != null) {
-            listener.onFragmentInteraction(getString(R.string.welcome), 1);
+            listener.onFragmentInteraction(getString(R.string.welcome), 4);
         }
 
         mSettings = getActivity().getSharedPreferences("mysettings", Context.MODE_PRIVATE);

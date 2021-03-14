@@ -80,7 +80,7 @@ public class PassportFragment extends Fragment {
 
         listener = (NavigationFragments) getActivity();
         if (listener != null) {
-            listener.onFragmentInteraction("Паспортный стол", 3);
+            listener.onFragmentInteraction(getString(R.string.app_name), 3);
         }
 
         mSettings = getActivity().getSharedPreferences("mysettings", Context.MODE_PRIVATE);

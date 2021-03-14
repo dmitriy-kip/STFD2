@@ -6,44 +6,69 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_centerInParent="true"
-        tools:ignore="UselessParent">
+        android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:layout_gravity="center">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Введите свой номер телефона"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:paddingTop="36dp"
+            android:paddingBottom="8dp"
+            android:textColor="@color/colorPrimary"
+            android:textAlignment="center"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Для того что бы войти в систему нужно ввести свой номер телефона. Если ваш номер телефона не зарегестрирован в системе, обратитесь в службу технической поддержки."
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:paddingTop="16dp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="32dp"
+        >
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="+7"
-            android:textSize="32sp"
-            android:layout_gravity="end" />
+            android:textSize="28sp"
+            android:layout_gravity="end"
+            android:layout_weight="5" />
 
         <EditText
             android:id="@+id/phone_number"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"
-            android:hint="XXX-XXX-XX-XX"
+            android:hint="Номер телефона"
+            android:textSize="28sp"
             android:layout_gravity="start"
-            android:maxLength="10" />
+            android:maxLength="10"
+            android:layout_weight="2"/>
     </LinearLayout>
 
         <Button
             android:id="@+id/start_button"
-            android:background="@drawable/start_style"
             android:layout_width="200dp"
-            android:layout_height="50dp"
+            android:layout_height="70dp"
             android:layout_gravity="center"
             android:layout_marginTop="32dp"
-            android:text="Продолжить"/>
+            android:background="@drawable/start_style"
+            android:text="Продолжить"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 

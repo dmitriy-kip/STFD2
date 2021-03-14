@@ -88,7 +88,7 @@ public class PhotoSenderFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_photo_sender, container, false);
+        final View rootView = inflater.inflate(R.layout.test, container, false);
 
         listener = (NavigationFragments) getActivity();
         if (listener != null) {

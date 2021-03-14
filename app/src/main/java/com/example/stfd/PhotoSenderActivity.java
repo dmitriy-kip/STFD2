@@ -3,19 +3,24 @@ package com.example.stfd;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -37,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import cz.msebera.android.httpclient.client.cache.Resource;
 
 public class PhotoSenderActivity extends AppCompatActivity implements NavigationFragments {
 
@@ -121,9 +128,20 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
     }
 
     @Override
-    public void goToPassport() {
+    public void goToPassport(String docNum, String notice, List<String> uris) {
         fm = getSupportFragmentManager();
         passportFragment = new PassportFragment();
+
+        Bundle args = new Bundle();
+        args.putString("numDoc", docNum);
+        args.putString("notice", notice);
+        args.putBoolean("history", true);
+        String[] ar = new String[0];
+        if (uris != null)
+            ar = (String[]) uris.toArray();
+        args.putStringArray("photosUri", ar);
+        passportFragment.setArguments(args);
+
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.container, passportFragment, "passportFragment");
         ft.commit();
@@ -149,7 +167,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
                     editor.putString("phone", phoneNumber);
                     editor.apply();
 
-                    goToPassport();
+                    goToPassport(null, null, null);
                     return;
                 default:
             }
@@ -191,17 +209,23 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
         getSupportActionBar().setTitle(title);
         switch (index){
             case 1:
+                getSupportActionBar().show();
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(getString(R.color.colorPrimary))));
                 break;
             case 2:
+                getSupportActionBar().show();
                 getSupportActionBar().setHomeButtonEnabled(true);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 break;
             case 3:
+                getSupportActionBar().show();
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(getString(R.color.colorPassport))));
+
                 break;
+            case 4:
+                getSupportActionBar().hide();
             default:
         }
 
