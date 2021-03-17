@@ -169,12 +169,6 @@ public class PhotoSenderFragment extends Fragment {
                     return;
                 }
 
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
                 final RelativeLayout progressCircle = rootView.findViewById(R.id.progress_circular1);
                 progressCircle.setVisibility(View.VISIBLE);
 
@@ -195,6 +189,7 @@ public class PhotoSenderFragment extends Fragment {
                 listImages.toArray(files);
 
                 AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
+                client.setConnectTimeout(30000);
                 RequestParams params = new RequestParams();
                 try {
                     params.put("file_upload[]", files);

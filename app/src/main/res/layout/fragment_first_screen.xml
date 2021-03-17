@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Для того что бы войти в систему нужно ввести свой номер телефона. Если ваш номер телефона не зарегестрирован в системе, обратитесь в службу технической поддержки."
+            android:text="Для того, чтобы войти в систему нужно ввести свой номер телефона. Если ваш номер телефона не зарегистрирован в системе, обратитесь в службу технической поддержки."
             android:layout_gravity="center"
             android:textAlignment="center"
             android:textSize="12sp"
