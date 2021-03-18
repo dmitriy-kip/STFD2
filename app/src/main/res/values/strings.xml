@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">П.scanner</string>
-    <string name="numdoc">Номер заявки</string>
-    <string name="notice">Примечание</string>
+    <string name="numdoc">Номер заявки:</string>
+    <string name="notice">Комментарий:</string>
     <string name="photo">ФОТО</string>
     <string name="send">Отправ.</string>
     <string name="gallery">галерея</string>
