@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -67,26 +68,29 @@ public class Utils {
         return bitmapdata;
     }
 
-    public static void fillImageToList(Bitmap bitmap, ArrayList<File> listImages, Context context1) {
+    public static ArrayList<File> fillImageToList(List<Bitmap> bitmaps, ArrayList<File> listImages, Context context1) {
+        for (Bitmap bitmap : bitmaps) {
 
-        try {
-            File f = new File(context1.getCacheDir(), createFileName());
-            f.createNewFile();
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-            byte[] bitmapdata = bos.toByteArray();
-            int bitmapdataSize = bitmapdata.length;
-            if (bitmapdataSize > 2000000){
-                bitmapdata = resizeBitmapData(bitmap, bos, 2000000);
+            try {
+                File f = new File(context1.getCacheDir(), createFileName());
+                f.createNewFile();
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
+                byte[] bitmapdata = bos.toByteArray();
+                int bitmapdataSize = bitmapdata.length;
+                if (bitmapdataSize > 2000000) {
+                    bitmapdata = resizeBitmapData(bitmap, bos, 2000000);
+                }
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(bitmapdata);
+                fos.flush();
+                fos.close();
+                listImages.add(f);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            FileOutputStream fos = new FileOutputStream(f);
-            fos.write(bitmapdata);
-            fos.flush();
-            fos.close();
-            listImages.add(f);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        return listImages;
 
     }
 
@@ -100,10 +104,10 @@ public class Utils {
         SharedPreferences mSettings = activity.getSharedPreferences("mysettings", Context.MODE_PRIVATE);
 
         //получаем модули которые доступны пользователю и преобразуем их в обычный строковый массив
-        //если модулей 1, тогда нам не нужен выпадающий список
+
         Set<String> set = mSettings.getStringSet("modules", null);
         String[] modules;
-        if (set != null && set.size() > 1)
+        if (set != null && set.size() > 0)
             modules = set.toArray(new String[set.size()]);
         else {
             spinner.setVisibility(View.INVISIBLE);

@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.example.stfd.Adapters.HistoryAdapter;
 import com.example.stfd.Adapters.MyAdapter;
 import com.example.stfd.DataBase.HistoryDAO;
+import com.example.stfd.Fragments.FailureDialog;
 import com.example.stfd.Fragments.FirstScreenFragment;
 import com.example.stfd.Fragments.HistoryFragment;
 //import com.thorny.photoeasy.OnPictureReady;
@@ -242,5 +243,11 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
                 break;
             default:
         }
+    }
+
+    @Override
+    public void executeOnFailureDialog() {
+        FailureDialog failureDialog = new FailureDialog();
+        failureDialog.show(getSupportFragmentManager(),"failureDialog");
     }
 }

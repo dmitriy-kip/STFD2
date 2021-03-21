@@ -3,5 +3,6 @@
     <color name="colorPrimary">#555454</color>
     <color name="colorPrimaryDark">#2B2B2B</color>
     <color name="colorAccent">#307A9C</color>
-    <color name="colorPassport">#FF973C</color>
+    <color name="colorCOOG">#555454</color>
+    <color name="colorPassport">#74AFCA</color>
 </resources>

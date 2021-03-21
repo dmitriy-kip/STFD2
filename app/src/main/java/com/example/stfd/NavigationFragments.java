@@ -15,4 +15,5 @@ public interface NavigationFragments {
     void onDialogPositiveClick(int indexModule);
     void youAreExist(Set<String> modules, String authId);
     void executeDialog(int response, int indexModule);
+    void executeOnFailureDialog();
 }

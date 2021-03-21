@@ -3,7 +3,7 @@
     <string name="numdoc">Номер заявки:</string>
     <string name="notice">Комментарий:</string>
     <string name="photo">ФОТО</string>
-    <string name="send">Отправ.</string>
+    <string name="send">Отправить</string>
     <string name="gallery">галерея</string>
     <string name="settings">Настройки</string>
     <string name="history">История</string>
@@ -20,6 +20,9 @@
     <string name="num_pas">Введите серию и номер паспорта</string>
     <string name="sent">Отправлено</string>
     <string name="not_sent">Не отправлено</string>
+    <string name="onFailure">Не удалось отправить</string>
+    <string name="onSuccess">Информация успешно отправлена</string>
+    <string name="close">Закрыть</string>
 
     <string-array name="catNames">
         <item>Барсик</item>

@@ -2,17 +2,12 @@ package com.example.stfd.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,8 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -31,14 +24,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stfd.Adapters.MyAdapter;
-import com.example.stfd.Adapters.SpinnerAdapter;
 import com.example.stfd.DataBase.AppDataBase;
 import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryEntity;
@@ -53,14 +43,11 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -88,7 +75,7 @@ public class PhotoSenderFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.test, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_photo_sender, container, false);
 
         listener = (NavigationFragments) getActivity();
         if (listener != null) {
@@ -182,9 +169,8 @@ public class PhotoSenderFragment extends Fragment {
                 numDoc = editNumDoc.getText().toString();
                 notice = editNotice.getText().toString();
 
-                for (int i = 0; i< bitmapList.size(); i++){
-                    Utils.fillImageToList(bitmapList.get(i), listImages, getActivity());
-                }
+                Utils.fillImageToList(bitmapList, listImages, getContext());
+
                 File[] files = new File[listImages.size()];
                 listImages.toArray(files);
 
@@ -232,14 +218,14 @@ public class PhotoSenderFragment extends Fragment {
                         switch (saveHistory) {
                             case Utils.SAVE_HISTORY_ALWAYS:
                             case Utils.SAVE_HISTORY_WHEN_FAILURE:
-                                Toast.makeText(getActivity(), "Не удалось отправить", Toast.LENGTH_LONG).show();
+                                listener.executeOnFailureDialog();
                                 saveData();
                                 break;
                             case Utils.SAVE_HISTORY_ON_REQUEST:
                                 listener.executeDialog(Utils.RESPONSE_IS_FAILURE, 1);
                                 break;
                             case Utils.SAVE_HISTORY_NEVER:
-                                Toast.makeText(getActivity(), "Не удалось отправить", Toast.LENGTH_LONG).show();
+                                listener.executeOnFailureDialog();
                                 break;
                             default:
                         }

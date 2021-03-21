@@ -37,10 +37,10 @@ public class HistorySaveDialog extends DialogFragment {
         String message = "";
         switch (response){
             case Utils.RESPONSE_IS_OK:
-                message = "Информация успешно отправлена";
+                message = getString(R.string.onSuccess);
                 break;
             case Utils.RESPONSE_IS_FAILURE:
-                message = "Не удалось отправить";
+                message = getString(R.string.onFailure);
                 break;
             default:
         }

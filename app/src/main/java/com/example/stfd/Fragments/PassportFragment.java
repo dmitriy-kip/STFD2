@@ -30,7 +30,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stfd.Adapters.MyAdapter;
 import com.example.stfd.DataBase.AppDataBase;
-import com.example.stfd.DataBase.HistoryDAO;
 import com.example.stfd.DataBase.HistoryDAOPassport;
 import com.example.stfd.DataBase.HistoryEntityPassport;
 import com.example.stfd.DataBase.SingletonAppDB;
@@ -171,9 +170,8 @@ public class PassportFragment extends Fragment {
                 numDoc = editNumDoc.getText().toString();
                 notice = editNotice.getText().toString();
 
-                for (int i = 0; i< bitmapList.size(); i++){
-                    Utils.fillImageToList(bitmapList.get(i), listImages, getActivity());
-                }
+                Utils.fillImageToList(bitmapList, listImages, getContext());
+
                 File[] files = new File[listImages.size()];
                 listImages.toArray(files);
 
