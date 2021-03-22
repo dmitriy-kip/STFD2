@@ -138,10 +138,10 @@ public class Utils {
                 String module = finalModules[pos];
                 switch (module){
                     case "ЦООГ":
-                        listener.goToPhotoSender(null,null, null);
+                        listener.goToPhotoSender(null);
                         break;
                     case "Паспортный стол":
-                        listener.goToPassport(null, null, null);
+                        listener.goToPassport(null);
                         break;
                     default:
                 }

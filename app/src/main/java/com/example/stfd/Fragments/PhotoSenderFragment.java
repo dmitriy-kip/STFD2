@@ -2,12 +2,17 @@ package com.example.stfd.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +21,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -24,7 +31,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,13 +52,17 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.impl.io.ContentLengthInputStream;
 
 public class PhotoSenderFragment extends Fragment {
 
@@ -71,6 +84,7 @@ public class PhotoSenderFragment extends Fragment {
     private SharedPreferences mSettings;
     private boolean fromHistory = false;
     private boolean status;
+    private int id = -1;
 
     @Nullable
     @Override
@@ -100,6 +114,7 @@ public class PhotoSenderFragment extends Fragment {
             }
 
             fromHistory = args.getBoolean("history");
+            id = args.getInt("id");
 
             if (args.getStringArray("photosUri") != null && args.getStringArray("photosUri").length > 0) {
             String[] photosArray = args.getStringArray("photosUri");
@@ -160,10 +175,11 @@ public class PhotoSenderFragment extends Fragment {
                 progressCircle.setVisibility(View.VISIBLE);
 
                 //получем настройки сохранения истории
-                if (!fromHistory) {
-                    saveHistory = mSettings.getInt("save", Utils.SAVE_HISTORY_ON_REQUEST);
-                } else {
+                if (fromHistory) {
                     saveHistory = Utils.SAVE_HISTORY_NEVER;
+                } else {
+                    if (mSettings.getInt("save", Utils.SAVE_HISTORY_ON_REQUEST) != 0)
+                        saveHistory = mSettings.getInt("save", Utils.SAVE_HISTORY_ON_REQUEST);
                 }
 
                 numDoc = editNumDoc.getText().toString();
@@ -175,7 +191,8 @@ public class PhotoSenderFragment extends Fragment {
                 listImages.toArray(files);
 
                 AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
-                client.setConnectTimeout(30000);
+                client.setConnectTimeout(30 * 1000);
+                client.setResponseTimeout(3600 * 1000);
                 RequestParams params = new RequestParams();
                 try {
                     params.put("file_upload[]", files);
@@ -207,6 +224,14 @@ public class PhotoSenderFragment extends Fragment {
                             default:
 
                         }
+                        clearAllFields();
+                        //photosUri.clear();
+
+                        if (fromHistory){
+                            if (id != -1){
+                                historyDAO.chanceStatus(true, id);
+                            }
+                        }
                         Log.e("ответ","все ок " + responseString);
                     }
 
@@ -229,6 +254,8 @@ public class PhotoSenderFragment extends Fragment {
                                 break;
                             default:
                         }
+                        listImages.clear();
+                        //photosUri.clear();
                         Log.e("ответ", "не ок " + responseString);
                     }
 
@@ -377,8 +404,8 @@ public class PhotoSenderFragment extends Fragment {
         editNumDoc.getText().clear();
         editNotice.getText().clear();
         myAdapter.clear();
-        listImages.clear();
         bitmapList.clear();
+        listImages.clear();
         photosUri.clear();
         fromHistory = false;
         sendPhoto.setVisibility(View.INVISIBLE);

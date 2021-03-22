@@ -70,12 +70,13 @@ public class PassportFragment extends Fragment {
     private SharedPreferences mSettings;
     boolean fromHistory = false;
     boolean status;
+    private int id = -1;
 
     @SuppressLint("ResourceAsColor")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_pasport, container, false);
+        final View rootView = inflater.inflate(R.layout.test2, container, false);
 
         listener = (NavigationFragments) getActivity();
         if (listener != null) {
@@ -100,6 +101,7 @@ public class PassportFragment extends Fragment {
             //}
 
             fromHistory = args.getBoolean("history");
+            id = args.getInt("id");
 
             if (args.getStringArray("photosUri") != null && args.getStringArray("photosUri").length > 0) {
                 String[] photosArray = args.getStringArray("photosUri");
@@ -161,10 +163,12 @@ public class PassportFragment extends Fragment {
                 progressCircle.setVisibility(View.VISIBLE);
 
                 //получем настройки сохранения истории
-                if (!fromHistory) {
-                    saveHistory = mSettings.getInt("save", Utils.SAVE_HISTORY_ON_REQUEST);
-                } else {
+                if (fromHistory) {
                     saveHistory = Utils.SAVE_HISTORY_NEVER;
+                } else {
+                    //если настройки ни разу не менялись, оставляем дефолтное значение
+                    if (mSettings.getInt("save", Utils.SAVE_HISTORY_ON_REQUEST) != 0)
+                        saveHistory = mSettings.getInt("save", Utils.SAVE_HISTORY_ON_REQUEST);
                 }
 
                 numDoc = editNumDoc.getText().toString();
@@ -176,7 +180,8 @@ public class PassportFragment extends Fragment {
                 listImages.toArray(files);
 
                 AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
-                client.setConnectTimeout(30000);
+                client.setConnectTimeout(30 * 1000);
+                client.setResponseTimeout(3600 * 1000);
                 RequestParams params = new RequestParams();
                 try {
                     params.put("file_upload[]", files);
@@ -212,6 +217,14 @@ public class PassportFragment extends Fragment {
                             default:
 
                         }
+                        listImages.clear();
+                        photosUri.clear();
+
+                        if (fromHistory){
+                            if (id != -1){
+                                historyDAO.chanceStatus(true, id);
+                            }
+                        }
                         Log.e("ответ","все ок " + responseString);
                     }
 
@@ -235,6 +248,8 @@ public class PassportFragment extends Fragment {
                                 break;
                             default:
                         }
+                        listImages.clear();
+                        photosUri.clear();
                         Log.e("ответ", "не ок " + responseString);
                     }
 

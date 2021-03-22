@@ -12,8 +12,11 @@ public interface HistoryDAOPassport {
     @Query("SELECT * FROM historyentitypassport")
     List<HistoryEntityPassport> getAllPassport();
 
-    @Query("SELECT * FROM historyentitypassport WHERE hid IN (:hIds)")
-    List<HistoryEntityPassport> loadAllByIdsPassport(int[] hIds);
+    /*@Query("SELECT * FROM historyentitypassport WHERE hid IN (:hIds)")
+    List<HistoryEntityPassport> loadAllByIdsPassport(int[] hIds);*/
+
+    @Query("UPDATE historyentitypassport SET status = (:status) WHERE hid = (:hId)")
+    void chanceStatus(boolean status, int hId);
 
     @Insert
     void insertAllPassport(HistoryEntityPassport... historyEntities);

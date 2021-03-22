@@ -82,7 +82,7 @@ public class HistoryAdapterPassport extends RecyclerView.Adapter<HistoryAdapterP
             @Override
             public void onClick(View view) {
                 NavigationFragments buttonItem = (NavigationFragments) context;
-                buttonItem.goToPassport(historyItem.docNum, historyItem.notice, historyItem.photos);
+                buttonItem.goToPassport(historyItem);
             }
         });
 

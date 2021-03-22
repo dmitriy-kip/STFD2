@@ -86,7 +86,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             @Override
             public void onClick(View view) {
                 NavigationFragments buttonItem = (NavigationFragments) context;
-                buttonItem.goToPhotoSender(historyItem.docNum, historyItem.notice, historyItem.photos);
+                buttonItem.goToPhotoSender(historyItem);
             }
         });
 

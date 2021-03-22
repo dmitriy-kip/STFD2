@@ -15,6 +15,9 @@ public interface HistoryDAO {
     /*@Query("SELECT * FROM historyentity WHERE hid IN (:hIds)")
     List<HistoryEntity> loadAllByIds(int[] hIds);*/
 
+    @Query("UPDATE historyentity SET status = (:status) WHERE hid = (:hId)")
+    void chanceStatus(boolean status, int hId);
+
     @Insert
     void insertAll(HistoryEntity... historyEntities);
 

@@ -28,6 +28,8 @@ import android.widget.Toast;
 import com.example.stfd.Adapters.HistoryAdapter;
 import com.example.stfd.Adapters.MyAdapter;
 import com.example.stfd.DataBase.HistoryDAO;
+import com.example.stfd.DataBase.HistoryEntity;
+import com.example.stfd.DataBase.HistoryEntityPassport;
 import com.example.stfd.Fragments.FailureDialog;
 import com.example.stfd.Fragments.FirstScreenFragment;
 import com.example.stfd.Fragments.HistoryFragment;
@@ -64,7 +66,7 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
 
         fm = getSupportFragmentManager();
         if (!phoneNumber.equals("+7")) {
-            goToPhotoSender(null, null, null);
+            goToPhotoSender(null);
         } else {
             goToFirstScreen();
         }
@@ -72,19 +74,22 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
     }
 
     @Override
-    public void goToPhotoSender(String docNum, String notice, List<String> uris) {
+    public void goToPhotoSender(HistoryEntity historyEntity) {
         FragmentTransaction ft = fm.beginTransaction();
         photoSenderFragment = new PhotoSenderFragment();
 
-        Bundle args = new Bundle();
-        args.putString("numDoc", docNum);
-        args.putString("notice", notice);
-        args.putBoolean("history", true);
-        String[] ar = new String[0];
-        if (uris != null)
-            ar = (String[]) uris.toArray();
-        args.putStringArray("photosUri", ar);
-        photoSenderFragment.setArguments(args);
+        if (historyEntity != null) {
+            Bundle args = new Bundle();
+            args.putString("numDoc", historyEntity.docNum);
+            args.putString("notice", historyEntity.notice);
+            args.putBoolean("history", true);
+            args.putInt("id", historyEntity.hid);
+            String[] ar = new String[0];
+            if (historyEntity.photos != null)
+                ar = (String[]) historyEntity.photos.toArray();
+            args.putStringArray("photosUri", ar);
+            photoSenderFragment.setArguments(args);
+        }
 
         ft.replace(R.id.container, photoSenderFragment, "historyFragment");
         //ft.addToBackStack(null);
@@ -129,19 +134,22 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
     }
 
     @Override
-    public void goToPassport(String docNum, String notice, List<String> uris) {
+    public void goToPassport(HistoryEntityPassport historyEntityPassport) {
         fm = getSupportFragmentManager();
         passportFragment = new PassportFragment();
 
-        Bundle args = new Bundle();
-        args.putString("numDoc", docNum);
-        args.putString("notice", notice);
-        args.putBoolean("history", true);
-        String[] ar = new String[0];
-        if (uris != null)
-            ar = (String[]) uris.toArray();
-        args.putStringArray("photosUri", ar);
-        passportFragment.setArguments(args);
+        if (historyEntityPassport != null) {
+            Bundle args = new Bundle();
+            args.putString("numDoc", historyEntityPassport.docNum);
+            args.putString("notice", historyEntityPassport.notice);
+            args.putBoolean("history", true);
+            args.putInt("id", historyEntityPassport.hid);
+            String[] ar = new String[0];
+            if (historyEntityPassport.photos != null)
+                ar = (String[]) historyEntityPassport.photos.toArray();
+            args.putStringArray("photosUri", ar);
+            photoSenderFragment.setArguments(args);
+        }
 
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.container, passportFragment, "passportFragment");
@@ -162,13 +170,13 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
                     editor.putString("phone", phoneNumber);
                     editor.apply();
                     
-                    goToPhotoSender(null,null,null);
+                    goToPhotoSender(null);
                     return;
                 case "Паспортный стол":
                     editor.putString("phone", phoneNumber);
                     editor.apply();
 
-                    goToPassport(null, null, null);
+                    goToPassport(null);
                     return;
                 default:
             }
