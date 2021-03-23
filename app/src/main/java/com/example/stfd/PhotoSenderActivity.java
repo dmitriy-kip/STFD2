@@ -42,6 +42,7 @@ import com.example.stfd.MyPhotoEasy.PhotoEasy;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -66,7 +67,11 @@ public class PhotoSenderActivity extends AppCompatActivity implements Navigation
 
         fm = getSupportFragmentManager();
         if (!phoneNumber.equals("+7")) {
-            goToPhotoSender(null);
+            Set<String> modules = mSettings.getStringSet("modules", null);
+            String authId = mSettings.getString("authId", "0");
+            if (modules != null){
+                youAreExist(modules, authId); //НЕ ПРАВИЛЬНО! ПЕРЕПИСАТЬ
+            }
         } else {
             goToFirstScreen();
         }
